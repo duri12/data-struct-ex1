@@ -16,13 +16,19 @@
 #define WORLDCUP23A1_H_
 
 #include "wet1util.h"
+#include "Team.h"
+#include "Player.h"
+#include "ActiveTeam.h"
 
 class world_cup_t {
 private:
-	//
-	// Here you may add anything you want
-	//
-	
+    avltree<*Player> current_active_teams; // an avl tree of the teams fit to play
+    avltree<Team> teams_tree; // an avl tree of the teams in the tournament
+    avltree<Player> players_tree_by_id; // a tree of the players in the team by their ID
+    avltree<*Player> players_tree_by_score; // a tree of the players in the team by their score
+    Player *top_scorer; // the top scorer from all the players in the tournament
+    int total_players_counter; // total number of players
+
 public:
 	// <DO-NOT-MODIFY> {
 	
