@@ -306,12 +306,36 @@ Node<T> *AvlTree<T>::remove(Node<T> *current_node, const T &value) {
     }
     else{ // found the value
         if(current_node->getLeft() == nullptr){
+            Node<T>* temp = current_node->getRight();
+            if(temp == nullptr){// no child case
+                delete current_node;
+                return nullptr;
+            }
+            else {// right child case
+                current_node->getLeft(temp->getLeft());
+                current_node->setRight(temp->getRight());
+                current_node->setData(temp->getData());
+
+                temp->setRight(nullptr);
+                temp->setLeft(nullptr);
+                delete temp;
+            }
             return current_node->getRight();
         }
-        else if(current_node->getRight() == nullptr){
+        else if(current_node->getRight() == nullptr){// left child case
             return current_node->getLeft();
+            Node<T>* temp = current_node->getLeft();
+
+            current_node->getLeft(temp->getLeft());
+            current_node->setRight(temp->getRight());
+            current_node->setData(temp->getData());
+
+            temp->setRight(nullptr);
+            temp->setLeft(nullptr);
+            delete temp;
+            return current_node;
         }
-        else { // node has both left and right
+        else {
             if(current_node->getLeft()->getheight() > current_node->getRight()->getheight()){ // left heavy node
                 const T& successorValue = findMax(current_node->getLeft()); // biggest from all smaller values
                 current_node->setData(successorValue);
