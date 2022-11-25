@@ -1,6 +1,8 @@
 #ifndef DATA_STRUCT_EX1_AVLTREE_H
 #define DATA_STRUCT_EX1_AVLTREE_H
 #include <iostream>
+using namespace std;
+
 
 template<typename T>
 class Node{
@@ -33,6 +35,8 @@ class Node{
 
 };
 
+
+
 template<typename T>
 class  AvlTree{
 
@@ -42,25 +46,31 @@ class  AvlTree{
 
     Node<T>* find(const T& value,Node<T>* current_node);
     Node<T>* insert(const T& value,Node<T>* current_node); // the recursive private function that inserts the node
+    Node<T>* remove(Node<T>* current_node,const T& value); // the recursive private function
     Node<T>* balance(Node<T>* current_node); // handles the rotation of the tree
     void update(Node<T>* node); // updates the height of the node and the BFactor
+    void printSubtree(Node<T>* root ,const string& prefix);
+    const T& findMax(Node<T>* node);
+    const T& findMin(Node<T>* node);
 
-    Node<T>* LLR(Node<T>* node); //Left left rotation of the tree
-    Node<T>* LRR(Node<T>* node); //Left right rotation of
-    Node<T>* RLR(Node<T>* node); //Right left rotation of the tree
-    Node<T>* RRR(Node<T>* node); //Right right rotation of the
+    Node<T>* LLR(Node<T>* node); //Left-left rotation of the tree
+    Node<T>* LRR(Node<T>* node); //Left-right rotation of
+    Node<T>* RLR(Node<T>* node); //Right-left rotation of the tree
+    Node<T>* RRR(Node<T>* node); //Right-right rotation of the
+
+
     public:
     AvlTree();
     ~AvlTree() = default; // should check if this works
     bool add(const T& value);
     Node<T>* getRoot();
-    void print();//prints the tree in InOrder format
+    void print();//prints the tree (copied from the internet)
     Node<T>* find(const T& value); // calls private find with the root
     int height(Node<T>* node);
     int BalanceFactor(Node<T>* node);
     Node<T>* RotateRight(Node<T>* node);
     Node<T>* RotateLeft(Node<T>* node);
-    void remove(const T& value);
+    bool remove(const T& value);
     //TODO: operators
 
 };
@@ -143,7 +153,8 @@ Node<T> *AvlTree<T>::insert(const T &value, Node<T> *current_node) {
     else{
         current_node->right = insert(value, current_node->right);
     }
-
+    update(current_node);
+    return  balance(current_node);
 }
 
 template<typename T>
@@ -188,17 +199,17 @@ Node<T> *AvlTree<T>::RotateLeft(Node<T> *node) {
     Node<T>* other = node->getRight();
     node->setRight(other->getLeft());
     other->setLeft(node);
-    update(other);
     update(node);
+    update(other);
     return other;
 }
 template<typename T>
 Node<T>* AvlTree<T>::RotateRight(Node<T> *node) {
-    Node<T>* other = node;
+    Node<T>* other = node->getLeft();
     node->setLeft(other->getRight());
     other->setRight(node);
-    update(other);
     update(node);
+    update(other);
     return other;
 }
 
@@ -222,6 +233,116 @@ Node<T> *AvlTree<T>::RLR(Node<T> *node) {
 template<typename T>
 Node<T> *AvlTree<T>::RRR(Node<T> *node) {
     return RotateLeft(node);
+}
+
+template<typename T>
+void AvlTree<T>::print() {
+    if (this->_root == nullptr)
+    {
+        return;
+    }
+
+    std::cout << this->_root->getData() << std::endl;
+    printSubtree(this->_root, "");
+    std::cout << std::endl;
+}
+
+template<typename T>
+void AvlTree<T>::printSubtree(Node<T> *root, const string &prefix) {
+    if (root == nullptr)
+    {
+        return;
+    }
+
+    bool hasLeft = (root->getLeft()!= nullptr);
+    bool hasRight = (root->getRight() != nullptr);
+
+    if (!hasLeft && !hasRight)
+    {
+        return;
+    }
+
+    cout << prefix;
+    cout << ((hasLeft  && hasRight) ? "├── " : "");
+    cout << ((!hasLeft && hasRight) ? "└── " : "");
+
+    if (hasRight)
+    {
+        bool printStrand = (hasLeft && (root->getRight()->getRight() != nullptr || root->getRight()->getLeft() != nullptr));
+        string newPrefix = prefix + (printStrand ? "│   " : "    ");
+        cout << root->getRight()->getData() << endl;
+        printSubtree(root->getRight(), newPrefix);
+    }
+
+    if (hasLeft)
+    {
+        cout << (hasRight ? prefix : "") << "└── " << root->getLeft()->getData() << endl;
+        printSubtree(root->getLeft(), prefix + "    ");
+    }
+}
+
+template<typename T>
+bool AvlTree<T>::remove(const T &value) {
+    if(value == nullptr){
+        return false;
+    }
+    if(find(value) != nullptr){
+        this->_root = remove(this->_root ,value);
+        return true;
+    }
+    return false;
+}
+
+template<typename T>
+Node<T> *AvlTree<T>::remove(Node<T> *current_node, const T &value) {
+    if(current_node == nullptr){
+        return nullptr;
+    }
+    if(value < current_node->getData()){
+        current_node->setLeft(remove(current_node->getLeft(), value));
+    }
+    else if(value > current_node->getData()){
+        current_node->setRight(remove(current_node->getRight(), value));
+    }
+    else{ // found the value
+        if(current_node->getLeft() == nullptr){
+            return current_node->getRight();
+        }
+        else if(current_node->getRight() == nullptr){
+            return current_node->getLeft();
+        }
+        else { // node has both left and right
+            if(current_node->getLeft()->getheight() > current_node->getRight()->getheight()){ // left heavy node
+                const T& successorValue = findMax(current_node->getLeft()); // biggest from all smaller values
+                current_node->setData(successorValue);
+                current_node->setLeft(remove(current_node->getLeft(), successorValue));
+            }
+            else{
+                const T& successorValue = findMin(current_node->getRight());//smaller from all larger values
+                current_node->setData(successorValue);
+                current_node->setRight(remove(current_node->getRight(), successorValue));
+            }
+
+        }
+    }
+    update(current_node);
+    return balance(current_node);
+}
+
+template<typename T>
+const T &AvlTree<T>::findMax(Node<T> *node) {
+    while(node->getRight()!= nullptr){
+        node = node->getRight();
+    }
+    return node->getData();
+}
+
+template<typename T>
+const T &AvlTree<T>::findMin(Node<T> *node) {
+    while (node->getLeft()!= nullptr){
+        node = node->getLeft();
+    }
+    return node->getData();
 }
 
 template<typename T>
