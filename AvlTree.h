@@ -323,7 +323,7 @@ Node<T> *AvlTree<T>::remove(Node<T> *current_node, const T &value) {
             return current_node->getRight();
         }
         else if(current_node->getRight() == nullptr){// left child case
-            return current_node->getLeft();
+
             Node<T>* temp = current_node->getLeft();
 
             current_node->getLeft(temp->getLeft());
@@ -333,7 +333,7 @@ Node<T> *AvlTree<T>::remove(Node<T> *current_node, const T &value) {
             temp->setRight(nullptr);
             temp->setLeft(nullptr);
             delete temp;
-            return current_node;
+            return current_node->getLeft();
         }
         else {
             if(current_node->getLeft()->getheight() > current_node->getRight()->getheight()){ // left heavy node
