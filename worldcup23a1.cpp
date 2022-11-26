@@ -1,19 +1,18 @@
 #include "worldcup23a1.h"
 
-world_cup_t::world_cup_t()
+world_cup_t::world_cup_t():current_active_teams(AvlTree<*Player>()),teams_tree(AvlTree<Team>()),players_tree_by_id(AvlTree<Player>()),players_tree_by_score(AvlTree<*Player>()),top_scorer(
+        nullptr),total_players_counter(0)
 {
-	// TODO: Your code goes here
+
 }
 
 world_cup_t::~world_cup_t()
-{
-	// TODO: Your code goes here
-}
+{}
 
 
 StatusType world_cup_t::add_team(int teamId, int points)
 {
-	// TODO: Your code goes here
+    
 	return StatusType::SUCCESS;
 }
 

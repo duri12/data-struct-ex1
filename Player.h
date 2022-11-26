@@ -2,7 +2,7 @@
 #define DATA_STRUCT_EX1_PLAYER_H
 
 #include "Team.h"
-
+#include "AvlTree.h"
 class Player {
 private:
     int player_ID; // the player's ID
@@ -15,5 +15,13 @@ private:
     Player *global_left_closest; // the player that is closest to this player from the left
     Player *global_right_closest; // the player that is closest to this player from the right
 public:
+    Player(int player_ID,int goals_scored,int cards,int games_played, int team_id,bool is_goalkeeper);
+    ~Player();
+
+
+
+
+
 };
+
 #endif //DATA_STRUCT_EX1_PLAYER_H
