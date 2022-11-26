@@ -308,17 +308,17 @@ bool AvlTree<T>::remove(const T &value) {
 
 template<typename T>
 Node<T> *AvlTree<T>::remove(Node<T> *current_node, const T &value) {
-    if(current_node == nullptr){
+    if(current_node == nullptr){// no value do nothing
         return nullptr;
     }
-    if(value < current_node->getData()){
+    if(value < current_node->getData()){ // value in left tree
         current_node->setLeft(remove(current_node->getLeft(), value));
     }
-    else if(value > current_node->getData()){
+    else if(value > current_node->getData()){ // value in right tree
         current_node->setRight(remove(current_node->getRight(), value));
     }
-    else{ // found the value
-        if(current_node->getLeft() == nullptr){
+    else{ // found the value and here the remove happened
+        if(current_node->getLeft() == nullptr){ // left / np child case
             Node<T>* temp = current_node->getRight();
             if(temp == nullptr){// no child case
                 if(current_node==this->_root)
