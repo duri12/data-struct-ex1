@@ -9,10 +9,8 @@ int main(){
     tree->add(2);
     tree->add(3);
     tree->add(4);
-    tree->print();
     tree->add(5);
     tree->add(5);
-    tree->print();
     tree->add(6);
     tree->add(7);
     tree->find(1);
@@ -31,5 +29,10 @@ int main(){
     tree->print();
     tree->remove(5);
     tree->print();
+    tree->remove(8);
+    tree->print();
+    tree->remove(20);
+    tree->print();
+
     return 0;
 }

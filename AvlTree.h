@@ -264,7 +264,7 @@ void AvlTree<T>::printSubtree(Node<T> *root, const string &prefix) {
 
     cout << prefix;
     cout << ((hasLeft  && hasRight) ? "|__ " : "");
-    cout << ((!hasLeft && hasRight) ? "-=L__ " : "");
+    cout << ((!hasLeft && hasRight) ? "L__ " : "");
 
     if (hasRight)
     {
@@ -283,9 +283,9 @@ void AvlTree<T>::printSubtree(Node<T> *root, const string &prefix) {
 
 template<typename T>
 bool AvlTree<T>::remove(const T &value) {
-    //if(value == nullptr){
-        //return false;
-    //}
+    if(find(value) == nullptr){
+        return false;
+    }
     if(find(value) != nullptr){
         this->_root = remove(this->_root ,value);
         return true;
@@ -308,7 +308,8 @@ Node<T> *AvlTree<T>::remove(Node<T> *current_node, const T &value) {
         if(current_node->getLeft() == nullptr){
             Node<T>* temp = current_node->getRight();
             if(temp == nullptr){// no child case
-                temp = current_node;
+                if(current_node==this->_root)
+                    this->_root = nullptr;
                 delete current_node;
                 return nullptr;
             }
