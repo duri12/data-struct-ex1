@@ -130,7 +130,13 @@ int AvlTree<T>::BalanceFactor(Node<T> *node) {
 template<typename T>
 bool AvlTree<T>::add(const T &value) {
     if (this->_root == nullptr){
-        this->_root = new Node<T>(value);
+        try{
+            this->_root = new Node<T>(value);
+
+        }
+        catch(std::bad_alloc&){
+            return false;
+        }
         return true;
     }
     Node<T>* temp = this->find(value);
@@ -145,7 +151,14 @@ bool AvlTree<T>::add(const T &value) {
 template<typename T>
 Node<T> *AvlTree<T>::insert(const T &value, Node<T> *current_node) {
     if (current_node == nullptr){
-        return new Node<T>(value);
+        Node<T>* new_node = nullptr;
+        try {
+            new_node = new Node<T>(value);
+        }
+        catch (const std::bad_alloc&) {
+            return nullptr;
+        }
+        return new_node;
     }
     if(current_node->getData() > value){
         current_node->setLeft(insert(value, current_node->getLeft()));
