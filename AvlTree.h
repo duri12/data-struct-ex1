@@ -44,7 +44,7 @@ class  AvlTree{
     Node<T>* _root;
 
 
-    Node<T>* find(const T& value,Node<T>* current_node);
+    Node<T>* find(Node<T>* current_node,const T& value);
     Node<T>* insert(const T& value,Node<T>* current_node); // the recursive private function that inserts the node
     Node<T>* remove(Node<T>* current_node,const T& value); // the recursive private function
     Node<T>* balance(Node<T>* current_node); // handles the rotation of the tree
@@ -98,14 +98,14 @@ Node<T> *AvlTree<T>::find(const T &value) {
 }
 
 template<typename T>
-Node<T> *AvlTree<T>::find(const T &value, Node<T> *current_node) { // returns the closest node
+Node<T> *AvlTree<T>::find( Node<T> *current_node,const T &value) { // returns the closest node
     if(current_node == nullptr){
         return nullptr;
     }
-    else if (current_node->Node::getData() > value && current_node->Node::getLeft() != nullptr){
+    else if (current_node->getData() > value && current_node->getLeft() != nullptr){
         return find(current_node->getLeft() , value);
     }
-    else if (current_node->Node::getData() < value && current_node->Node::getRight() != nullptr){
+    else if (current_node->getData() < value && current_node->getRight() != nullptr){
         return find(current_node->getRight() , value);
     }
     return current_node;
@@ -115,7 +115,7 @@ template<typename T>
 int AvlTree<T>::height(Node<T> *node) {
     if(node == nullptr)
         return 0;
-    return node->Node::getHeight();
+    return node->getHeight();
 }
 
 template<typename T>
@@ -147,11 +147,11 @@ Node<T> *AvlTree<T>::insert(const T &value, Node<T> *current_node) {
     if (current_node == nullptr){
         return new Node<T>(value);
     }
-    if(current_node->value > value){
-        current_node->left = insert(value, current_node->left);
+    if(current_node->getData() > value){
+        current_node->setLeft(insert(value, current_node->getLeft()));
     }
     else{
-        current_node->right = insert(value, current_node->right);
+        current_node->setRight(insert(value, current_node->getRight()));
     }
     update(current_node);
     return  balance(current_node);
@@ -164,12 +164,12 @@ void AvlTree<T>::update(Node<T> *node) {
     if(node == nullptr)
         return;
     if(node->getLeft()!= nullptr){
-        lh = node->getLeft()->getHeight();
+        lh = node->getLeft()->getheight();
     }
     if(node->getRight()!= nullptr){
-        rh = node->getRight()->getHeight();
+        rh = node->getRight()->getheight();
     }
-    node->setHeight(1+std::max(rh,lh));
+    node->setheight(1+std::max(rh,lh));
     node->setBF(rh-lh);
 }
 
@@ -263,29 +263,29 @@ void AvlTree<T>::printSubtree(Node<T> *root, const string &prefix) {
     }
 
     cout << prefix;
-    cout << ((hasLeft  && hasRight) ? "├── " : "");
-    cout << ((!hasLeft && hasRight) ? "└── " : "");
+    cout << ((hasLeft  && hasRight) ? "|__ " : "");
+    cout << ((!hasLeft && hasRight) ? "-=L__ " : "");
 
     if (hasRight)
     {
         bool printStrand = (hasLeft && (root->getRight()->getRight() != nullptr || root->getRight()->getLeft() != nullptr));
-        string newPrefix = prefix + (printStrand ? "│   " : "    ");
+        string newPrefix = prefix + (printStrand ? "|   " : "    ");
         cout << root->getRight()->getData() << endl;
         printSubtree(root->getRight(), newPrefix);
     }
 
     if (hasLeft)
     {
-        cout << (hasRight ? prefix : "") << "└── " << root->getLeft()->getData() << endl;
+        cout << (hasRight ? prefix : "") << "L__ " << root->getLeft()->getData() << endl;
         printSubtree(root->getLeft(), prefix + "    ");
     }
 }
 
 template<typename T>
 bool AvlTree<T>::remove(const T &value) {
-    if(value == nullptr){
-        return false;
-    }
+    //if(value == nullptr){
+        //return false;
+    //}
     if(find(value) != nullptr){
         this->_root = remove(this->_root ,value);
         return true;
@@ -308,11 +308,12 @@ Node<T> *AvlTree<T>::remove(Node<T> *current_node, const T &value) {
         if(current_node->getLeft() == nullptr){
             Node<T>* temp = current_node->getRight();
             if(temp == nullptr){// no child case
+                temp = current_node;
                 delete current_node;
                 return nullptr;
             }
             else {// right child case
-                current_node->getLeft(temp->getLeft());
+                current_node->setLeft(temp->getLeft());
                 current_node->setRight(temp->getRight());
                 current_node->setData(temp->getData());
 
@@ -326,7 +327,7 @@ Node<T> *AvlTree<T>::remove(Node<T> *current_node, const T &value) {
 
             Node<T>* temp = current_node->getLeft();
 
-            current_node->getLeft(temp->getLeft());
+            current_node->setLeft(temp->getLeft());
             current_node->setRight(temp->getRight());
             current_node->setData(temp->getData());
 
@@ -397,7 +398,6 @@ Node<T>::~Node() {
     if(this->_left != nullptr){
         delete this->_left;
     }
-    delete this->_data;
 }
 
 template<typename T>

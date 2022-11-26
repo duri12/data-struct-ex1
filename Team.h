@@ -1,10 +1,12 @@
 #ifndef DATA_STRUCT_EX1_TEAM_H
 #define DATA_STRUCT_EX1_TEAM_H
 #include "Player.h"
+#include "AvlTree.h"
+
 class Team {
 private:
-    avltree<Player> players_in_team_by_score; // the players in the team by their score
-    avltree<Player> players_in_team_by_id; // the players in the team by their identify number
+    AvlTree<Player> players_in_team_by_score; // the players in the team by their score
+    AvlTree<Player> players_in_team_by_id; // the players in the team by their identify number
     int sum_of_player_score;  // the sum of all the player's scores in the team (goals - cards)
     int teamID; // the team ID
     int player_count; // the number of players in the team
