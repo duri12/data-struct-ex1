@@ -1,6 +1,6 @@
 #include "worldcup23a1.h"
 
-world_cup_t::world_cup_t():current_active_teams(AvlTree<*Player>()),teams_tree(AvlTree<Team>()),players_tree_by_id(AvlTree<Player>()),players_tree_by_score(AvlTree<*Player>()),top_scorer(
+world_cup_t::world_cup_t():current_active_teams(AvlTree<Player*>()),teams_tree(AvlTree<Team*>()),players_tree_by_id(AvlTree<Player*>()),players_tree_by_score(AvlTree<Player*>()),top_scorer(
         nullptr),total_players_counter(0)
 {
 
@@ -12,20 +12,57 @@ world_cup_t::~world_cup_t()
 
 StatusType world_cup_t::add_team(int teamId, int points)
 {
-    
-	return StatusType::SUCCESS;
+    if(teamId<=0||points<0)
+        return StatusType::INVALID_INPUT;
+    try {
+        Team *t1 = new Team(teamId, points);
+       if(teams_tree.add(t1)== false)
+           return StatusType::FAILURE;
+       else
+           return StatusType::SUCCESS;
+
+    }
+    catch(std::bad_alloc&)
+    {
+        return StatusType::ALLOCATION_ERROR;
+    }
+
 }
 
 StatusType world_cup_t::remove_team(int teamId)
 {
-	// TODO: Your code goes here
-	return StatusType::FAILURE;
+    if(teamId<=0)
+        return StatusType::INVALID_INPUT;
+    try{
+        Team *t1 = new Team(teamId, 0);
+        if(teams_tree.remove(t1)== false)
+            return StatusType::FAILURE;
+        else
+            return StatusType::SUCCESS;
+
+
+    }
+    catch (std::bad_alloc&){
+        return StatusType::ALLOCATION_ERROR;
+    }
 }
 
 StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
                                    int goals, int cards, bool goalKeeper)
 {
-	// TODO: Your code goes here
+    if(teamId<=0||playerId<=0||gamesPlayed<0||goals<0||cards<0)
+        return StatusType::INVALID_INPUT;
+    if(gamesPlayed=0&&(goals>0||cards>0))
+        return StatusType::INVALID_INPUT;
+    try{
+
+
+    }
+    catch(std::bad_alloc)
+    {
+
+    }
+
 	return StatusType::SUCCESS;
 }
 

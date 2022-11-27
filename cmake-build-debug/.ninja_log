@@ -1,4 +1,16 @@
 # ninja log v5
 4	244	6909285159088468	CMakeFiles/data_struct_ex1.dir/worldcup23a1.cpp.obj	ecdada06c3528700
-0	321	6909285159812764	CMakeFiles/data_struct_ex1.dir/main23a1.cpp.obj	a38be6e3a15d5804
-321	459	6909285161202548	data_struct_ex1.exe	84aee760c3f8419b
+0	497	6912486904719663	CMakeFiles/data_struct_ex1.dir/main23a1.cpp.obj	a38be6e3a15d5804
+4	480	6912486904360949	CMakeFiles/data_struct_ex1.dir/Player.cpp.obj	447053125bd23821
+3	200	6912487242590100	data_struct_ex1.exe	214e98877d1d7915
+8	483	6912486904546474	CMakeFiles/data_struct_ex1.dir/Team.cpp.obj	6bfd085a6bf0a8c4
+6	527	6912486905013976	CMakeFiles/data_struct_ex1.dir/TreeTestMain.cpp.obj	f9c60cad756bc593
+0	217	6912567698449304	CMakeFiles/data_struct_ex1.dir/Team.cpp.obj	6bfd085a6bf0a8c4
+2	212	6912568347809548	CMakeFiles/data_struct_ex1.dir/Team.cpp.obj	6bfd085a6bf0a8c4
+2	250	6912568580142206	CMakeFiles/data_struct_ex1.dir/Team.cpp.obj	6bfd085a6bf0a8c4
+2	222	6912569679285736	CMakeFiles/data_struct_ex1.dir/Team.cpp.obj	6bfd085a6bf0a8c4
+222	281	6912569679846834	data_struct_ex1.exe	17868496d1bf4ad5
+2	221	6912569778273079	CMakeFiles/data_struct_ex1.dir/Team.cpp.obj	6bfd085a6bf0a8c4
+222	278	6912569778813772	data_struct_ex1.exe	17868496d1bf4ad5
+2	227	6912569847439087	CMakeFiles/data_struct_ex1.dir/Team.cpp.obj	6bfd085a6bf0a8c4
+228	287	6912569848005895	data_struct_ex1.exe	17868496d1bf4ad5

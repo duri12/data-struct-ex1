@@ -23,10 +23,10 @@
 
 class world_cup_t {
 private:
-    AvlTree<*Player> current_active_teams; // an avl tree of the teams fit to play
-    AvlTree<Team> teams_tree; // an avl tree of the teams in the tournament
-    AvlTree<Player> players_tree_by_id; // a tree of the players in the team by their ID
-    AvlTree<*Player> players_tree_by_score; // a tree of the players in the team by their score
+    AvlTree<Player*> current_active_teams; // an avl tree of the teams fit to play
+    AvlTree<Team*> teams_tree; // an avl tree of the teams in the tournament
+    AvlTree<Player*> players_tree_by_id; // a tree of the players in the team by their ID
+    AvlTree<Player*> players_tree_by_score; // a tree of the players in the team by their score
     Player *top_scorer; // the top scorer from all the players in the tournament
     int total_players_counter; // total number of players
 
