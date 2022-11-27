@@ -1,6 +1,6 @@
 #include "worldcup23a1.h"
-
-world_cup_t::world_cup_t():current_active_teams(AvlTree<Player*>()),teams_tree(AvlTree<Team*>()),players_tree_by_id(AvlTree<Player*>()),players_tree_by_score(AvlTree<Player*>()),top_scorer(
+#include "memory"
+world_cup_t::world_cup_t():current_active_teams(AvlTree<std::shared_ptr<Team>>()),teams_tree(AvlTree<std::shared_ptr<Team>>()),players_tree_by_id(AvlTree<std::shared_ptr<Player>>()),players_tree_by_score(AvlTree<std::shared_ptr<Player>>()),top_scorer(
         nullptr),total_players_counter(0)
 {
 
@@ -15,8 +15,8 @@ StatusType world_cup_t::add_team(int teamId, int points)
     if(teamId<=0||points<0)
         return StatusType::INVALID_INPUT;
     try {
-        Team *t1 = new Team(teamId, points);
-       if(teams_tree.add(t1)== false)
+        std::shared_ptr<Team> t1 (new Team(teamId, points));
+       if(teams_tree.add(t1,&compare_teams_by_id)==false)
            return StatusType::FAILURE;
        else
            return StatusType::SUCCESS;
@@ -34,11 +34,12 @@ StatusType world_cup_t::remove_team(int teamId)
     if(teamId<=0)
         return StatusType::INVALID_INPUT;
     try{
-        Team *t1 = new Team(teamId, 0);
-        if(teams_tree.remove(t1)== false)
+        std::shared_ptr<Team> t1 (new Team(teamId, 0));
+        if(teams_tree.remove(t1,&compare_teams_by_id)== false)
             return StatusType::FAILURE;
         else
             return StatusType::SUCCESS;
+
 
 
     }
@@ -55,6 +56,19 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
     if(gamesPlayed=0&&(goals>0||cards>0))
         return StatusType::INVALID_INPUT;
     try{
+        std::shared_ptr<Player> player1 (new Player(playerId,teamId,gamesPlayed,goals,cards,goalKeeper));
+        std::shared_ptr<Team> team_copy (new Team(teamId,0));
+        Node<shared_ptr<Team>> *n1=teams_tree.find(team_copy,compare_teams_by_id);
+        if(n1==nullptr)
+        {
+            return StatusType::FAILURE;
+        }
+        player1->set_team_pointer(n1->getData());
+        player1->pla
+
+
+
+
 
 
     }

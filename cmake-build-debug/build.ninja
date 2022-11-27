@@ -60,8 +60,36 @@ build edit_cache: phony CMakeFiles/edit_cache.util
 
 build cmake_object_order_depends_target_data_struct_ex1: phony || CMakeFiles/data_struct_ex1.dir
 
+build CMakeFiles/data_struct_ex1.dir/main23a1.cpp.obj: CXX_COMPILER__data_struct_ex1_Debug C$:/Users/tony9/data-struct-ex1/main23a1.cpp || cmake_object_order_depends_target_data_struct_ex1
+  DEP_FILE = CMakeFiles\data_struct_ex1.dir\main23a1.cpp.obj.d
+  FLAGS = -g -std=gnu++14
+  INCLUDES = -IC:/Users/tony9/data-struct-ex1/.
+  OBJECT_DIR = CMakeFiles\data_struct_ex1.dir
+  OBJECT_FILE_DIR = CMakeFiles\data_struct_ex1.dir
+
+build CMakeFiles/data_struct_ex1.dir/Player.cpp.obj: CXX_COMPILER__data_struct_ex1_Debug C$:/Users/tony9/data-struct-ex1/Player.cpp || cmake_object_order_depends_target_data_struct_ex1
+  DEP_FILE = CMakeFiles\data_struct_ex1.dir\Player.cpp.obj.d
+  FLAGS = -g -std=gnu++14
+  INCLUDES = -IC:/Users/tony9/data-struct-ex1/.
+  OBJECT_DIR = CMakeFiles\data_struct_ex1.dir
+  OBJECT_FILE_DIR = CMakeFiles\data_struct_ex1.dir
+
 build CMakeFiles/data_struct_ex1.dir/Team.cpp.obj: CXX_COMPILER__data_struct_ex1_Debug C$:/Users/tony9/data-struct-ex1/Team.cpp || cmake_object_order_depends_target_data_struct_ex1
   DEP_FILE = CMakeFiles\data_struct_ex1.dir\Team.cpp.obj.d
+  FLAGS = -g -std=gnu++14
+  INCLUDES = -IC:/Users/tony9/data-struct-ex1/.
+  OBJECT_DIR = CMakeFiles\data_struct_ex1.dir
+  OBJECT_FILE_DIR = CMakeFiles\data_struct_ex1.dir
+
+build CMakeFiles/data_struct_ex1.dir/worldcup23a1.cpp.obj: CXX_COMPILER__data_struct_ex1_Debug C$:/Users/tony9/data-struct-ex1/worldcup23a1.cpp || cmake_object_order_depends_target_data_struct_ex1
+  DEP_FILE = CMakeFiles\data_struct_ex1.dir\worldcup23a1.cpp.obj.d
+  FLAGS = -g -std=gnu++14
+  INCLUDES = -IC:/Users/tony9/data-struct-ex1/.
+  OBJECT_DIR = CMakeFiles\data_struct_ex1.dir
+  OBJECT_FILE_DIR = CMakeFiles\data_struct_ex1.dir
+
+build CMakeFiles/data_struct_ex1.dir/TreeTestMain.cpp.obj: CXX_COMPILER__data_struct_ex1_Debug C$:/Users/tony9/data-struct-ex1/TreeTestMain.cpp || cmake_object_order_depends_target_data_struct_ex1
+  DEP_FILE = CMakeFiles\data_struct_ex1.dir\TreeTestMain.cpp.obj.d
   FLAGS = -g -std=gnu++14
   INCLUDES = -IC:/Users/tony9/data-struct-ex1/.
   OBJECT_DIR = CMakeFiles\data_struct_ex1.dir
@@ -75,7 +103,7 @@ build CMakeFiles/data_struct_ex1.dir/Team.cpp.obj: CXX_COMPILER__data_struct_ex1
 #############################################
 # Link the executable data_struct_ex1.exe
 
-build data_struct_ex1.exe: CXX_EXECUTABLE_LINKER__data_struct_ex1_Debug CMakeFiles/data_struct_ex1.dir/Team.cpp.obj
+build data_struct_ex1.exe: CXX_EXECUTABLE_LINKER__data_struct_ex1_Debug CMakeFiles/data_struct_ex1.dir/main23a1.cpp.obj CMakeFiles/data_struct_ex1.dir/Player.cpp.obj CMakeFiles/data_struct_ex1.dir/Team.cpp.obj CMakeFiles/data_struct_ex1.dir/worldcup23a1.cpp.obj CMakeFiles/data_struct_ex1.dir/TreeTestMain.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\data_struct_ex1.dir
