@@ -6,11 +6,10 @@ using namespace std;
 
 template<typename T>
 class Node{
-//TODO:change all private members to _
     private:
     T _data;
     int _height{};
-    int BF{}; // the balanceFactor of the tree note : _bf is reseved by the language
+    int BF{}; // the balanceFactor of the tree note : _bf is reserved by the language
     Node<T>* _left;
     Node<T>* _right;
     Node<T>* _parent;
@@ -44,9 +43,9 @@ class  AvlTree{
     Node<T>* _root;
 
 
-    Node<T>* find(Node<T>* current_node,const T& value);
-    Node<T>* insert(const T& value,Node<T>* current_node); // the recursive private function that inserts the node
-    Node<T>* remove(Node<T>* current_node,const T& value); // the recursive private function
+    Node<T>* find(Node<T>* current_node,const T& value ,int (*compare)(T,T));
+    Node<T>* insert(const T& value,Node<T>* current_node, int (*compare)(T,T)); // the recursive private function that inserts the node
+    Node<T>* remove(Node<T>* current_node,const T& value, int (*compare)(T,T)); // the recursive private function
     Node<T>* balance(Node<T>* current_node); // handles the rotation of the tree
     void update(Node<T>* node); // updates the height of the node and the BFactor
     void printSubtree(Node<T>* root ,const string& prefix);
@@ -62,16 +61,15 @@ class  AvlTree{
     public:
     AvlTree();
     ~AvlTree() = default; // should check if this works
-    bool add(const T& value);
+    bool add(const T& value, int (*compare)(T,T));
     Node<T>* getRoot();
     void print();//prints the tree (copied from the internet)
-    Node<T>* find(const T& value); // calls private find with the root
+    Node<T>* find(const T& value, int (*compare)(T,T)); // calls private find with the root
     int height(Node<T>* node);
     int BalanceFactor(Node<T>* node);
     Node<T>* RotateRight(Node<T>* node);
     Node<T>* RotateLeft(Node<T>* node);
-    bool remove(const T& value);
-    //TODO: operators
+    bool remove(const T& value, int (*compare)(T,T));
 
 };
 
@@ -86,11 +84,11 @@ Node<T> *AvlTree<T>::getRoot() {
 }
 
 template<typename T>
-Node<T> *AvlTree<T>::find(const T &value) {
-    if(this->_root == nullptr){
+Node<T> *AvlTree<T>::find(const T &value, int (*compare)(T,T)) {
+    if(this->_root == nullptr||compare == nullptr){
         return nullptr;
     }
-    Node<T>* result = find(this->_root, value);
+    Node<T>* result = find(this->_root, value,compare);
     if(result->getData() != value){ // if value is not  in the tree return  nullptr instead
         return nullptr;
     }
@@ -98,15 +96,15 @@ Node<T> *AvlTree<T>::find(const T &value) {
 }
 
 template<typename T>
-Node<T> *AvlTree<T>::find( Node<T> *current_node,const T &value) { // returns the closest node
-    if(current_node == nullptr){
+Node<T> *AvlTree<T>::find( Node<T> *current_node,const T &value, int (*compare)(T,T)) { // returns the closest node
+    if(current_node == nullptr||compare == nullptr){
         return nullptr;
     }
-    else if (current_node->getData() > value && current_node->getLeft() != nullptr){
-        return find(current_node->getLeft() , value);
+    else if (compare(current_node->getData() , value) == -1 && current_node->getLeft() != nullptr){ // current_node->getData() > value && current_node->getLeft() != nullptr
+        return find(current_node->getLeft() , value,compare);
     }
-    else if (current_node->getData() < value && current_node->getRight() != nullptr){
-        return find(current_node->getRight() , value);
+    else if (compare(current_node->getData() , value) == 1 && current_node->getRight() != nullptr){//current_node->getData() < value && current_node->getRight() != nullptr
+        return find(current_node->getRight() , value,compare);
     }
     return current_node;
 }
@@ -128,30 +126,49 @@ int AvlTree<T>::BalanceFactor(Node<T> *node) {
 
 
 template<typename T>
-bool AvlTree<T>::add(const T &value) {
+bool AvlTree<T>::add(const T &value,int (*compare)(T,T)) {
+    if(compare==nullptr){
+        return false;
+    }
     if (this->_root == nullptr){
-        this->_root = new Node<T>(value);
+        try{
+            this->_root = new Node<T>(value);
+
+        }
+        catch(std::bad_alloc&){
+            return false;
+        }
         return true;
     }
-    Node<T>* temp = this->find(value);
+    Node<T>* temp = this->find(value ,compare);
     if(temp != nullptr){
         return false; // already added
     }
-    this->_root = insert(value, this->_root);
+    this->_root = insert(value, this->_root , compare);
     return true;
 
 }
 
 template<typename T>
-Node<T> *AvlTree<T>::insert(const T &value, Node<T> *current_node) {
-    if (current_node == nullptr){
-        return new Node<T>(value);
+Node<T> *AvlTree<T>::insert(const T &value, Node<T> *current_node, int (*compare)(T,T)) {
+    if(compare == nullptr){
+        return  nullptr;
     }
-    if(current_node->getData() > value){
-        current_node->setLeft(insert(value, current_node->getLeft()));
+    if (current_node == nullptr){
+        Node<T>* new_node;
+        try {
+            new_node = new Node<T>(value);
+        }
+        catch (const std::bad_alloc&) {
+            return nullptr;
+        }
+        return new_node;
+    }
+    if(compare(current_node->getData() , value)==-1){//current_node->getData() > value
+        current_node->setLeft(insert(value, current_node->getLeft() ,compare));
     }
     else{
-        current_node->setRight(insert(value, current_node->getRight()));
+        current_node->setRight(insert(value, current_node->getRight(),compare));
     }
     update(current_node);
     return  balance(current_node);
@@ -282,30 +299,33 @@ void AvlTree<T>::printSubtree(Node<T> *root, const string &prefix) {
 }
 
 template<typename T>
-bool AvlTree<T>::remove(const T &value) {
-    if(find(value) == nullptr){
+bool AvlTree<T>::remove(const T &value,int (*compare)(T,T)) {
+    if(compare == nullptr){
         return false;
     }
-    if(find(value) != nullptr){
-        this->_root = remove(this->_root ,value);
+    if(find(value,compare) == nullptr){
+        return false;
+    }
+    if(find(value,compare) != nullptr){
+        this->_root = remove(this->_root ,value,compare);
         return true;
     }
     return false;
 }
 
 template<typename T>
-Node<T> *AvlTree<T>::remove(Node<T> *current_node, const T &value) {
-    if(current_node == nullptr){
+Node<T> *AvlTree<T>::remove(Node<T> *current_node, const T &value,int (*compare)(T,T)) {
+    if(current_node == nullptr || compare == nullptr){// no value do nothing
         return nullptr;
     }
-    if(value < current_node->getData()){
-        current_node->setLeft(remove(current_node->getLeft(), value));
+    if(compare(value , current_node->getData()) == 1){ // value in left tree
+        current_node->setLeft(remove(current_node->getLeft(), value,compare));
     }
-    else if(value > current_node->getData()){
-        current_node->setRight(remove(current_node->getRight(), value));
+    else if(compare( value , current_node->getData()) == -1){ // value in right tree
+        current_node->setRight(remove(current_node->getRight(), value,compare));
     }
-    else{ // found the value
-        if(current_node->getLeft() == nullptr){
+    else{ // found the value and here the remove happened
+        if(current_node->getLeft() == nullptr){ // left / np child case
             Node<T>* temp = current_node->getRight();
             if(temp == nullptr){// no child case
                 if(current_node==this->_root)
@@ -341,12 +361,12 @@ Node<T> *AvlTree<T>::remove(Node<T> *current_node, const T &value) {
             if(current_node->getLeft()->getheight() > current_node->getRight()->getheight()){ // left heavy node
                 const T& successorValue = findMax(current_node->getLeft()); // biggest from all smaller values
                 current_node->setData(successorValue);
-                current_node->setLeft(remove(current_node->getLeft(), successorValue));
+                current_node->setLeft(remove(current_node->getLeft(), successorValue,compare));
             }
             else{
                 const T& successorValue = findMin(current_node->getRight());//smaller from all larger values
                 current_node->setData(successorValue);
-                current_node->setRight(remove(current_node->getRight(), successorValue));
+                current_node->setRight(remove(current_node->getRight(), successorValue,compare));
             }
 
         }
