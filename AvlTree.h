@@ -70,7 +70,6 @@ class  AvlTree{
     Node<T>* RotateRight(Node<T>* node);
     Node<T>* RotateLeft(Node<T>* node);
     bool remove(const T& value, int (*compare)(T,T));
-    //TODO: operators
 
 };
 
@@ -156,7 +155,7 @@ Node<T> *AvlTree<T>::insert(const T &value, Node<T> *current_node, int (*compare
         return  nullptr;
     }
     if (current_node == nullptr){
-        Node<T>* new_node = nullptr;
+        Node<T>* new_node;
         try {
             new_node = new Node<T>(value);
         }

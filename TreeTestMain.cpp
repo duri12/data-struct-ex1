@@ -1,6 +1,6 @@
 #include "AvlTree.h"
 #include <string>
-#include <iostream>
+
 using namespace std;
 
 int compare(int a , int b){
@@ -12,7 +12,7 @@ int compare(int a , int b){
 }
 
 int main(){
-    AvlTree<int>* tree = new AvlTree<int>;
+    auto* tree = new AvlTree<int>;
     tree->add(1,compare);
     tree->add(2,compare);
     tree->add(3,compare);
