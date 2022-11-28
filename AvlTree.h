@@ -8,8 +8,8 @@ template<typename T>
 class Node{
     private:
     T _data;
-    int _height;
-    int BF; // the balanceFactor of the tree note : _bf is reserved by the language
+    int _height{};
+    int BF{}; // the balanceFactor of the tree note : _bf is reserved by the language
     Node<T>* _left;
     Node<T>* _right;
     Node<T>* _parent;
@@ -69,6 +69,8 @@ class  AvlTree{
     int BalanceFactor(Node<T>* node);
     Node<T>* RotateRight(Node<T>* node);
     Node<T>* RotateLeft(Node<T>* node);
+    const T& findMax();
+    const T& findMin();
     bool remove(const T& value, int (*compare)(T,T));
 
 };
@@ -389,6 +391,16 @@ const T &AvlTree<T>::findMin(Node<T> *node) {
 template<typename T>
 AvlTree<T>::~AvlTree() {
     delete this->_root;
+}
+
+template<typename T>
+const T &AvlTree<T>::findMax() {
+    return this->findMax(this->_root);
+}
+
+template<typename T>
+const T &AvlTree<T>::findMin() {
+    return this->findMin(this->_root);
 }
 
 template<typename T>
