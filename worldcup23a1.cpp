@@ -103,12 +103,14 @@ StatusType world_cup_t::remove_player(int playerId)
     if(playerId<=0)
         return StatusType::INVALID_INPUT;
     try{
+        std::shared_ptr<Team> tempteam (new Team(0,0);
         std::shared_ptr<Player> player1 (new Player(playerId,0,0,0,0,0));
         Node<shared_ptr<Player>> *n1=players_tree_by_id.find(player1,compare_players_by_ID);
         if(n1==nullptr)
         {
             return StatusType::FAILURE;
         }
+        tempteam=n1->getData()->get_team_pointer();
        if( n1->getData()->get_team_pointer()->remove_player_from_team_by_ID(player1)==false)
            return StatusType::FAILURE;
        if( n1->getData()->get_team_pointer()->remove_player_from_team_by_Score(player1)==false)
@@ -117,6 +119,7 @@ StatusType world_cup_t::remove_player(int playerId)
            return StatusType::FAILURE;
        if(n1->getData()->get_team_pointer()->getTeamTopScorer()==n1->getData())
            n1->getData()->get_team_pointer()->setTeamTopScorer(n1->getData()->get_team_pointer())
+       if()
 
     catch{
 
