@@ -8,8 +8,8 @@ template<typename T>
 class Node{
     private:
     T _data;
-    int _height{};
-    int BF{}; // the balanceFactor of the tree note : _bf is reserved by the language
+    int _height;
+    int BF; // the balanceFactor of the tree note : _bf is reserved by the language
     Node<T>* _left;
     Node<T>* _right;
     Node<T>* _parent;
@@ -60,7 +60,7 @@ class  AvlTree{
 
     public:
     AvlTree();
-    ~AvlTree() = default; // should check if this works
+    ~AvlTree();
     bool add(const T& value, int (*compare)(T,T));
     Node<T>* getRoot();
     void print();//prints the tree (copied from the internet)
@@ -89,7 +89,7 @@ Node<T> *AvlTree<T>::find(const T &value, int (*compare)(T,T)) {
         return nullptr;
     }
     Node<T>* result = find(this->_root, value,compare);
-    if(result->getData() != value){ // if value is not  in the tree return  nullptr instead
+    if(compare(result->getData() ,value) !=0){ // if value is not  in the tree return  nullptr instead
         return nullptr;
     }
     return result;
@@ -155,11 +155,12 @@ Node<T> *AvlTree<T>::insert(const T &value, Node<T> *current_node, int (*compare
         return  nullptr;
     }
     if (current_node == nullptr){
-        Node<T>* new_node;
+        Node<T>* new_node = nullptr;
         try {
             new_node = new Node<T>(value);
         }
         catch (const std::bad_alloc&) {
+            delete new_node;
             return nullptr;
         }
         return new_node;
@@ -213,21 +214,25 @@ Node<T> *AvlTree<T>::balance(Node<T> *current_node) {
 
 template<typename T>
 Node<T> *AvlTree<T>::RotateLeft(Node<T> *node) {
+
     Node<T>* other = node->getRight();
     node->setRight(other->getLeft());
     other->setLeft(node);
     update(node);
     update(other);
     return other;
+
 }
 template<typename T>
 Node<T>* AvlTree<T>::RotateRight(Node<T> *node) {
+
     Node<T>* other = node->getLeft();
     node->setLeft(other->getRight());
     other->setRight(node);
     update(node);
     update(other);
     return other;
+
 }
 
 template<typename T>
@@ -237,13 +242,13 @@ Node<T> *AvlTree<T>::LLR(Node<T> *node) {
 
 template<typename T>
 Node<T> *AvlTree<T>::LRR(Node<T> *node) {
-    node->setLeft(RotateLeft(node));
+    node->setLeft(RotateLeft(node->getLeft()));
     return LLR(node);
 }
 
 template<typename T>
 Node<T> *AvlTree<T>::RLR(Node<T> *node) {
-    node->setRight(RotateRight(node));
+    node->setRight(RotateRight(node->getRight()));
     return RRR(node);
 }
 
@@ -325,37 +330,27 @@ Node<T> *AvlTree<T>::remove(Node<T> *current_node, const T &value,int (*compare)
         current_node->setRight(remove(current_node->getRight(), value,compare));
     }
     else{ // found the value and here the remove happened
-        if(current_node->getLeft() == nullptr){ // left / np child case
+        if(current_node->getLeft() == nullptr){ // left / no child case
             Node<T>* temp = current_node->getRight();
+
             if(temp == nullptr){// no child case
-                if(current_node==this->_root)
-                    this->_root = nullptr;
                 delete current_node;
                 return nullptr;
             }
             else {// right child case
-                current_node->setLeft(temp->getLeft());
-                current_node->setRight(temp->getRight());
-                current_node->setData(temp->getData());
 
-                temp->setRight(nullptr);
-                temp->setLeft(nullptr);
-                delete temp;
+                current_node->setRight(nullptr);
+                delete current_node;
             }
-            return current_node->getRight();
+
+            return temp;
         }
         else if(current_node->getRight() == nullptr){// left child case
 
             Node<T>* temp = current_node->getLeft();
-
-            current_node->setLeft(temp->getLeft());
-            current_node->setRight(temp->getRight());
-            current_node->setData(temp->getData());
-
-            temp->setRight(nullptr);
-            temp->setLeft(nullptr);
-            delete temp;
-            return current_node->getLeft();
+            current_node->setLeft(nullptr);
+            delete current_node;
+            return temp;
         }
         else {
             if(current_node->getLeft()->getheight() > current_node->getRight()->getheight()){ // left heavy node
@@ -389,6 +384,11 @@ const T &AvlTree<T>::findMin(Node<T> *node) {
         node = node->getLeft();
     }
     return node->getData();
+}
+
+template<typename T>
+AvlTree<T>::~AvlTree() {
+    delete this->_root;
 }
 
 template<typename T>
