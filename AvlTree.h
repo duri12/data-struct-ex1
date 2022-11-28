@@ -45,6 +45,7 @@ class  AvlTree{
 
     Node<T>* find(Node<T>* current_node,const T& value ,int (*compare)(T,T));
     Node<T>* insert(const T& value,Node<T>* current_node, int (*compare)(T,T)); // the recursive private function that inserts the node
+    Node<T>* insert(const T& value ,Node<T>* current_node ,int (*compare)(T,T),const T& left , const T& right); // the recursive private function that
     Node<T>* remove(Node<T>* current_node,const T& value, int (*compare)(T,T)); // the recursive private function
     Node<T>* balance(Node<T>* current_node); // handles the rotation of the tree
     void update(Node<T>* node); // updates the height of the node and the BFactor
@@ -62,6 +63,7 @@ class  AvlTree{
     AvlTree();
     ~AvlTree();
     bool add(const T& value, int (*compare)(T,T));
+    bool add(const T& value, int (*compare)(T,T),const T& left , const T& right);
     Node<T>* getRoot();
     void print();//prints the tree (copied from the internet)
     Node<T>* find(const T& value, int (*compare)(T,T)); // calls private find with the root
@@ -149,6 +151,30 @@ bool AvlTree<T>::add(const T &value,int (*compare)(T,T)) {
     this->_root = insert(value, this->_root , compare);
     return true;
 
+}
+template<typename T>
+bool AvlTree<T>::add(const T &value, int (*compare)(T, T), const T &left, const T &right) {
+    if(compare==nullptr){
+        return false;
+    }
+    if (this->_root == nullptr){
+        try{
+            this->_root = new Node<T>(value);
+
+        }
+        catch(std::bad_alloc&){
+            return false;
+        }
+        left = nullptr;
+        right = nullptr;
+        return true;
+    }
+    Node<T>* temp = this->find(value ,compare);
+    if(temp != nullptr){
+        return false; // already added
+    }
+    this->_root = insert(value, this->_root , compare,left,right);
+    return true;
 }
 
 template<typename T>
@@ -402,6 +428,36 @@ template<typename T>
 const T &AvlTree<T>::findMin() {
     return this->findMin(this->_root);
 }
+
+template<typename T>
+Node<T> *
+AvlTree<T>::insert(const T &value, Node<T> *current_node, int (*compare)(T, T), const T &left, const T &right) {
+    if(compare == nullptr){
+        return  nullptr;
+    }
+    if (current_node == nullptr){
+        Node<T>* new_node = nullptr;
+        try {
+            new_node = new Node<T>(value);
+        }
+        catch (const std::bad_alloc&) {
+            delete new_node;
+            return nullptr;
+        }
+        return new_node;
+    }
+    if(compare(current_node->getData() , value)==-1){//current_node->getData() > value
+        left = current_node->getData();
+        current_node->setLeft(insert(value, current_node->getLeft() ,compare));
+    }
+    else{
+        right = current_node->getData();
+        current_node->setRight(insert(value, current_node->getRight(),compare));
+    }
+    update(current_node);
+    return  balance(current_node);
+}
+
 
 template<typename T>
 Node<T>::Node(const T &data) {
