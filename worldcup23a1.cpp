@@ -51,11 +51,13 @@ StatusType world_cup_t::remove_team(int teamId)
 StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
                                    int goals, int cards, bool goalKeeper)
 {
+    //check invalid inputs
     if(teamId<=0||playerId<=0||gamesPlayed<0||goals<0||cards<0)
         return StatusType::INVALID_INPUT;
     if(gamesPlayed=0&&(goals>0||cards>0))
         return StatusType::INVALID_INPUT;
     try{
+        //create variables and find the team
         std::shared_ptr<Player> player1 (new Player(playerId,teamId,gamesPlayed,goals,cards,goalKeeper));
         std::shared_ptr<Team> team_copy (new Team(teamId,0));
         Node<shared_ptr<Team>> *n1=teams_tree.find(team_copy,compare_teams_by_id);
@@ -63,18 +65,34 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         {
             return StatusType::FAILURE;
         }
+        //initialize the correct teampointer for the player
         player1->set_team_pointer(n1->getData());
-        player1->pla
-
-
-
-
-
-
+        if(player1->get_team_pointer()->add_player_to_team_by_ID(player1)==false)//put in player_in_team_by_id
+            return StatusType::FAILURE;
+        if(player1->get_team_pointer()->add_player_to_team_by_score(player1)==false)//put in player_in_team_by_score
+            return StatusType::FAILURE;
+        if(players_tree_by_id.add(player1,&compare_players_by_ID)==false)//put in player_tree_by_id
+            return StatusType::FAILURE;
+        if(players_tree_by_score.add(player1,&compare_players_by_Score)==false) //put in player_tree_by_score
+            return StatusType::FAILURE;
+        player1->set_games_played(gamesPlayed-player1->get_team_pointer()->getAdditionalGamesPlayed());//set games played
+        player1->get_team_pointer()->setsum_of_player_score((player1->get_team_pointer()->getsum_of_player_score())+(player1->get_goals_scored()-player1->get_cards()));//set sum of players score for team
+        if(player1->get_team_pointer()->getTeamTopScorer()->get_goals_scored()<player1->get_goals_scored()) {//check if it new team_top_scorer
+            player1->get_team_pointer()->setTeamTopScorer(player1);
+            if (top_scorer->get_goals_scored() < player1->get_goals_scored())// check if it new top scorer
+                top_scorer=player1;
+        }
+        total_players_counter++;//add 1 to total_players_counter
+        player1->get_team_pointer()->setPlayerCount(player1->get_team_pointer()->getPlayerCount()+1);//add 1 to team_players_count;
+        if(player1->get_is_goalkeeper()==true)
+            player1->get_team_pointer()->setGoalkeeperCount(player1->get_team_pointer()->getGoalkeeperCount()+1);//if player is goalkeeper add 1 to team's goalkeeper count
+        if(player1->get_team_pointer()->getGoalkeeperCount()>0&&player1->get_team_pointer()->getPlayerCount()>10)//add team to current active teams if suitable
+            current_active_teams.add(player1->get_team_pointer(),compare_teams_by_id);
     }
+
     catch(std::bad_alloc)
     {
-
+        return StatusType::FAILURE;
     }
 
 	return StatusType::SUCCESS;
@@ -82,7 +100,29 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
 
 StatusType world_cup_t::remove_player(int playerId)
 {
-	// TODO: Your code goes here
+    if(playerId<=0)
+        return StatusType::INVALID_INPUT;
+    try{
+        std::shared_ptr<Player> player1 (new Player(playerId,0,0,0,0,0));
+        Node<shared_ptr<Player>> *n1=players_tree_by_id.find(player1,compare_players_by_ID);
+        if(n1==nullptr)
+        {
+            return StatusType::FAILURE;
+        }
+       if( n1->getData()->get_team_pointer()->remove_player_from_team_by_ID(player1)==false)
+           return StatusType::FAILURE;
+       if( n1->getData()->get_team_pointer()->remove_player_from_team_by_Score(player1)==false)
+            return StatusType::FAILURE;
+       if(players_tree_by_score.remove(n1->getData(),compare_players_by_Score)==false)
+           return StatusType::FAILURE;
+       if(n1->getData()->get_team_pointer()->getTeamTopScorer()==n1->getData())
+           n1->getData()->get_team_pointer()->setTeamTopScorer(n1->getData()->get_team_pointer())
+
+    catch{
+
+    }
+
+    }
 	return StatusType::SUCCESS;
 }
 
