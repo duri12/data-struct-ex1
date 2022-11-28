@@ -39,6 +39,12 @@ bool Team::find_player_by_ID(std::shared_ptr<Player> player1){
 bool Team::find_player_by_score(std::shared_ptr<Player> player1){
     return players_in_team_by_score.find(player1,&compare_players_by_Score);
 }
+const std::shared_ptr<Player> Team::find_max_by_ID() {
+    return players_in_team_by_id.findMax();
+}
+const std::shared_ptr<Player> Team::find_max_by_Score() {
+    return players_in_team_by_score.findMax();
+}
 
 
 

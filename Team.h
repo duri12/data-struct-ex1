@@ -37,8 +37,8 @@ bool remove_player_from_team_by_ID(std::shared_ptr<Player> player1);
 bool remove_player_from_team_by_Score(std::shared_ptr<Player> player1);
 bool find_player_by_ID(std::shared_ptr<Player> player1);
 bool find_player_by_score(std::shared_ptr<Player> player1);
-const Team find_max_by_ID(std::shared_ptr<Player> player1);
-const Team find_max_by_Score(std::shared_ptr<Player> player1);
+const std::shared_ptr<Player> find_max_by_ID();
+const std::shared_ptr<Player> find_max_by_Score();
 
 };
 int compare_teams_by_id(std::shared_ptr<Team> team1, std::shared_ptr<Team>team2);
