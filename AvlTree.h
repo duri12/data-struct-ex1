@@ -92,7 +92,7 @@ Node<T> *AvlTree<T>::find(const T &value, int (*compare)(T,T)) {
     if(compare(result->getData() ,value) !=0){ // if value is not  in the tree return  nullptr instead
         return nullptr;
     }
-    return result;
+    return result->getData();
 }
 
 template<typename T>

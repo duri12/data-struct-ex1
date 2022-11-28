@@ -1,17 +1,7 @@
 # ninja log v5
-3	350	6913294153895641	CMakeFiles/data_struct_ex1.dir/TreeTestMain.cpp.obj	7229b0b29e35faa
-351	445	6913294154812895	data_struct_ex1.exe	214e98877d1d7915
-3	385	6913294885301873	CMakeFiles/data_struct_ex1.dir/TreeTestMain.cpp.obj	7229b0b29e35faa
-386	492	6913294886329126	data_struct_ex1.exe	214e98877d1d7915
-3	834	6913295103613154	CMakeFiles/data_struct_ex1.dir/TreeTestMain.cpp.obj	7229b0b29e35faa
-834	984	6913295104949576	data_struct_ex1.exe	214e98877d1d7915
-3	366	6913295812069440	CMakeFiles/data_struct_ex1.dir/TreeTestMain.cpp.obj	7229b0b29e35faa
-367	467	6913295813056802	data_struct_ex1.exe	214e98877d1d7915
-38	508	6913321934367129	CMakeFiles/data_struct_ex1.dir/TreeTestMain.cpp.obj	7229b0b29e35faa
-509	614	6913321935409539	data_struct_ex1.exe	214e98877d1d7915
-2	528	6913322246652595	CMakeFiles/data_struct_ex1.dir/TreeTestMain.cpp.obj	7229b0b29e35faa
-529	813	6913322249504962	data_struct_ex1.exe	214e98877d1d7915
-3	544	6913326068947477	CMakeFiles/data_struct_ex1.dir/TreeTestMain.cpp.obj	7229b0b29e35faa
-544	753	6913326070962079	data_struct_ex1.exe	214e98877d1d7915
-3	503	6913329367575427	CMakeFiles/data_struct_ex1.dir/TreeTestMain.cpp.obj	7229b0b29e35faa
-504	738	6913329369619960	data_struct_ex1.exe	214e98877d1d7915
+4	244	6909285159088468	CMakeFiles/data_struct_ex1.dir/worldcup23a1.cpp.obj	ecdada06c3528700
+0	497	6912486904719663	CMakeFiles/data_struct_ex1.dir/main23a1.cpp.obj	a38be6e3a15d5804
+4	480	6912486904360949	CMakeFiles/data_struct_ex1.dir/Player.cpp.obj	447053125bd23821
+228	287	6912569848005895	data_struct_ex1.exe	17868496d1bf4ad5
+2	227	6912569847439087	CMakeFiles/data_struct_ex1.dir/Team.cpp.obj	6bfd085a6bf0a8c4
+6	527	6912486905013976	CMakeFiles/data_struct_ex1.dir/TreeTestMain.cpp.obj	f9c60cad756bc593

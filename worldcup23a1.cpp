@@ -1,32 +1,82 @@
 #include "worldcup23a1.h"
-
-world_cup_t::world_cup_t()
+#include "memory"
+world_cup_t::world_cup_t():current_active_teams(AvlTree<std::shared_ptr<Team>>()),teams_tree(AvlTree<std::shared_ptr<Team>>()),players_tree_by_id(AvlTree<std::shared_ptr<Player>>()),players_tree_by_score(AvlTree<std::shared_ptr<Player>>()),top_scorer(
+        nullptr),total_players_counter(0)
 {
-	// TODO: Your code goes here
+
 }
 
 world_cup_t::~world_cup_t()
-{
-	// TODO: Your code goes here
-}
+{}
 
 
 StatusType world_cup_t::add_team(int teamId, int points)
 {
-	// TODO: Your code goes here
-	return StatusType::SUCCESS;
+    if(teamId<=0||points<0)
+        return StatusType::INVALID_INPUT;
+    try {
+        std::shared_ptr<Team> t1 (new Team(teamId, points));
+       if(teams_tree.add(t1,&compare_teams_by_id)==false)
+           return StatusType::FAILURE;
+       else
+           return StatusType::SUCCESS;
+
+    }
+    catch(std::bad_alloc&)
+    {
+        return StatusType::ALLOCATION_ERROR;
+    }
+
 }
 
 StatusType world_cup_t::remove_team(int teamId)
 {
-	// TODO: Your code goes here
-	return StatusType::FAILURE;
+    if(teamId<=0)
+        return StatusType::INVALID_INPUT;
+    try{
+        std::shared_ptr<Team> t1 (new Team(teamId, 0));
+        if(teams_tree.remove(t1,&compare_teams_by_id)== false)
+            return StatusType::FAILURE;
+        else
+            return StatusType::SUCCESS;
+
+
+
+    }
+    catch (std::bad_alloc&){
+        return StatusType::ALLOCATION_ERROR;
+    }
 }
 
 StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
                                    int goals, int cards, bool goalKeeper)
 {
-	// TODO: Your code goes here
+    if(teamId<=0||playerId<=0||gamesPlayed<0||goals<0||cards<0)
+        return StatusType::INVALID_INPUT;
+    if(gamesPlayed=0&&(goals>0||cards>0))
+        return StatusType::INVALID_INPUT;
+    try{
+        std::shared_ptr<Player> player1 (new Player(playerId,teamId,gamesPlayed,goals,cards,goalKeeper));
+        std::shared_ptr<Team> team_copy (new Team(teamId,0));
+        Node<shared_ptr<Team>> *n1=teams_tree.find(team_copy,compare_teams_by_id);
+        if(n1==nullptr)
+        {
+            return StatusType::FAILURE;
+        }
+        player1->set_team_pointer(n1->getData());
+        player1->pla
+
+
+
+
+
+
+    }
+    catch(std::bad_alloc)
+    {
+
+    }
+
 	return StatusType::SUCCESS;
 }
 
