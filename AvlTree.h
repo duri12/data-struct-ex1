@@ -49,7 +49,7 @@ class  AvlTree{
     private:
     Node<T>* _root;
 
-
+    int treeToArrayInOrder(Node<T> *node,T array[]  , int i); // when called should set  i=0;
     Node<T>* find(Node<T>* current_node,const T& value ,int (*compare)(T,T));
     Node<T>* insert(const T& value,Node<T>* current_node, int (*compare)(T,T)); // the recursive private function that inserts the node
     Node<T>* insert(const T& value ,Node<T>* current_node ,int (*compare)(T,T),const T& left , const T& right); // the recursive private function that
@@ -88,10 +88,11 @@ class  AvlTree{
     bool createTreeFromSortedArray(T array[] ,int size);
 
     Node<T>* find(const T& value, int (*compare)(T,T)); // calls private find with the root
-    int treeToArrayInOrder(Node<T> *node,T array[]  , int i); // when called should set  i=0;
-    bool add(const T& value, int (*compare)(T,T),const T& left , const T& right);
-    
 
+    bool add(const T& value, int (*compare)(T,T),const T& left , const T& right);
+
+
+    void treeToArrayInOrder(T *array, int size);
 };
 
 
@@ -486,6 +487,14 @@ int AvlTree<T>::size(Node<T> *node) const {
         return 0;
     }
     return size(node->getLeft())+size(node->getRight())+1;
+}
+
+template<typename T>
+void AvlTree<T>::treeToArrayInOrder( T *array, int size) {
+    if(array == nullptr){
+        return;
+    }
+    treeToArrayInOrder(this->_root, array,size);
 }
 
 template<typename T>
