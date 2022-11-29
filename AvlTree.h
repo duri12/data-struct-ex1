@@ -6,38 +6,45 @@ using namespace std;
 
 template<typename T>
 class Node{
+
+
     private:
+    int BF{}; // the balanceFactor of the tree note : _bf is reserved by the language
     T _data;
     int _height{};
-    int BF{}; // the balanceFactor of the tree note : _bf is reserved by the language
     Node<T>* _left;
     Node<T>* _right;
     Node<T>* _parent;
+    
+    
     public:
-
     explicit Node(const T& data) ;
     Node(const T& data, Node<T>* left, Node<T>* right, Node<T> parent) ;
     ~Node();
-    const T& getData();
-    int getheight();
     int getBF();
+    int getheight();
+    const T& getData();
+    void setBF(int BF);
     Node<T>* getLeft();
+    void print() const ;
     Node<T>* getRight();
     Node<T>* getParent();
+
+
+    void setheight(int height);
+    void setData(const T& data);
     void setLeft(Node<T>* left);
     void setRight(Node<T>* right);
     void setParent(Node<T>* parent);
-    void setData(const T& data);
-    void setheight(int height);
-    void setBF(int BF);
-    void print() const ;
-
+    
+    
 };
 
 
 
 template<typename T>
 class  AvlTree{
+
 
     private:
     Node<T>* _root;
@@ -47,11 +54,16 @@ class  AvlTree{
     Node<T>* insert(const T& value,Node<T>* current_node, int (*compare)(T,T)); // the recursive private function that inserts the node
     Node<T>* insert(const T& value ,Node<T>* current_node ,int (*compare)(T,T),const T& left , const T& right); // the recursive private function that
     Node<T>* remove(Node<T>* current_node,const T& value, int (*compare)(T,T)); // the recursive private function
+    Node<T>* createTreeFromSortedArray(T *array, int start, int end);
     Node<T>* balance(Node<T>* current_node); // handles the rotation of the tree
+
+
     void update(Node<T>* node); // updates the height of the node and the BFactor
     void printSubtree(Node<T>* root ,const string& prefix);
     const T& findMax(Node<T>* node);
     const T& findMin(Node<T>* node);
+    int size(Node<T> *node) const;
+
 
     Node<T>* LLR(Node<T>* node); //Left-left rotation of the tree
     Node<T>* LRR(Node<T>* node); //Left-right rotation of
@@ -62,30 +74,38 @@ class  AvlTree{
     public:
     AvlTree();
     ~AvlTree();
-    bool add(const T& value, int (*compare)(T,T));
-    bool add(const T& value, int (*compare)(T,T),const T& left , const T& right);
-    Node<T>* getRoot();
-    void print();//prints the tree (copied from the internet)
-    Node<T>* find(const T& value, int (*compare)(T,T)); // calls private find with the root
-    int height(Node<T>* node);
-    int BalanceFactor(Node<T>* node);
-    Node<T>* RotateRight(Node<T>* node);
-    Node<T>* RotateLeft(Node<T>* node);
     const T& findMax();
     const T& findMin();
+    Node<T>* getRoot();
+    int height(Node<T>* node);
+    int BalanceFactor(Node<T>* node);
+
+    Node<T>* RotateLeft(Node<T>* node);
+    Node<T>* RotateRight(Node<T>* node);
+    void print();//prints the tree (copied from the internet)
+    bool add(const T& value, int (*compare)(T,T));
     bool remove(const T& value, int (*compare)(T,T));
+    bool createTreeFromSortedArray(T array[] ,int size);
+
+    Node<T>* find(const T& value, int (*compare)(T,T)); // calls private find with the root
+    int treeToArrayInOrder(Node<T> *node,T array[]  , int i); // when called should set  i=0;
+    bool add(const T& value, int (*compare)(T,T),const T& left , const T& right);
+    
 
 };
+
 
 template<typename T>
 AvlTree<T>::AvlTree() {
     this->_root = nullptr;
 }
 
+
 template<typename T>
 Node<T> *AvlTree<T>::getRoot() {
     return this->_root;
 }
+
 
 template<typename T>
 Node<T> *AvlTree<T>::find(const T &value, int (*compare)(T,T)) {
@@ -96,7 +116,7 @@ Node<T> *AvlTree<T>::find(const T &value, int (*compare)(T,T)) {
     if(compare(result->getData() ,value) !=0){ // if value is not  in the tree return  nullptr instead
         return nullptr;
     }
-    return result->getData();
+    return result;
 }
 
 template<typename T>
@@ -458,6 +478,56 @@ AvlTree<T>::insert(const T &value, Node<T> *current_node, int (*compare)(T, T), 
     return  balance(current_node);
 }
 
+
+
+template<typename T>
+int AvlTree<T>::size(Node<T> *node) const {
+    if(node == nullptr){
+        return 0;
+    }
+    return size(node->getLeft())+size(node->getRight())+1;
+}
+
+template<typename T>
+int AvlTree<T>::treeToArrayInOrder(Node<T> *node,T array[]  , int i){
+    if (node== nullptr)
+        return i;
+    i = inorder(node->getRight(), array, i);
+    array[i++] = node->getData();
+    i = inorder(node->getLeft(), array, i);
+    return i;
+
+}
+
+template<typename T>
+bool AvlTree<T>::createTreeFromSortedArray(T *array, int size) {
+    try{
+        this->_root = createTreeFromSortedArray(array,0,size);
+    }
+    catch (const std::bad_alloc&) {
+        return false;
+    }
+    return true;
+}
+
+template<typename T>
+Node<T>* AvlTree<T>::createTreeFromSortedArray(T *array, int start, int end) {
+    if (start > end)
+        return nullptr;
+
+    /* Get the middle element and make it root */
+    int mid = (start + end)/2;
+    Node<T> *root = nullptr;
+    try {
+        root = newNode(array[mid]);
+        root->setLeft(sortedArrayToBST(array, start,mid - 1));
+        root->setRight(sortedArrayToBST(array, mid + 1, end));
+    }
+    catch (const std::bad_alloc&) {
+        throw std::bad_alloc();
+    }
+    return root;
+}
 
 template<typename T>
 Node<T>::Node(const T &data) {
