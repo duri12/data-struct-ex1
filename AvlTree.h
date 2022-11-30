@@ -19,7 +19,7 @@ class Node{
     
     public:
     explicit Node(const T& data) ;
-    Node(const T& data, Node<T>* left, Node<T>* right, Node<T> parent) ;
+    Node(const T& data, Node<T>* left, Node<T>* right, Node<T> parent) ; // to check
     ~Node();
     int getBF();
     int getheight();
@@ -52,17 +52,17 @@ class  AvlTree{
     int treeToArrayInOrder(Node<T> *node,T array[]  , int i); // when called should set  i=0;
     Node<T>* find(Node<T>* current_node,const T& value ,int (*compare)(T,T));
     Node<T>* insert(const T& value,Node<T>* current_node, int (*compare)(T,T)); // the recursive private function that inserts the node
-    Node<T>* insert(const T& value ,Node<T>* current_node ,int (*compare)(T,T),const T& left , const T& right); // the recursive private function that
+    Node<T>* insert(const T& value ,Node<T>* current_node ,int (*compare)(T,T),const T& left , const T& right); // to check
     Node<T>* remove(Node<T>* current_node,const T& value, int (*compare)(T,T)); // the recursive private function
-    Node<T>* createTreeFromSortedArray(T *array, int start, int end);
+    Node<T>* createTreeFromSortedArray(T *array, int start, int end);// to check
     Node<T>* balance(Node<T>* current_node); // handles the rotation of the tree
 
 
     void update(Node<T>* node); // updates the height of the node and the BFactor
     void printSubtree(Node<T>* root ,const string& prefix);
-    const T& findMax(Node<T>* node);
-    const T& findMin(Node<T>* node);
-    int size(Node<T> *node) const;
+    const T& findMax(Node<T>* node); // to check
+    const T& findMin(Node<T>* node);// to check
+    int size(Node<T> *node) const;// to check
 
 
     Node<T>* LLR(Node<T>* node); //Left-left rotation of the tree
@@ -74,8 +74,8 @@ class  AvlTree{
     public:
     AvlTree();
     ~AvlTree();
-    const T& findMax();
-    const T& findMin();
+    const T& findMax();// to check
+    const T& findMin();// to check
     Node<T>* getRoot();
     int height(Node<T>* node);
     int BalanceFactor(Node<T>* node);
@@ -85,14 +85,14 @@ class  AvlTree{
     void print();//prints the tree (copied from the internet)
     bool add(const T& value, int (*compare)(T,T));
     bool remove(const T& value, int (*compare)(T,T));
-    bool createTreeFromSortedArray(T array[] ,int size);
+    bool createTreeFromSortedArray(T array[] ,int size); // to check
 
     Node<T>* find(const T& value, int (*compare)(T,T)); // calls private find with the root
 
-    bool add(const T& value, int (*compare)(T,T),const T& left , const T& right);
+    bool add(const T& value, int (*compare)(T,T),const T& left , const T& right);// to check
 
 
-    void treeToArrayInOrder(T *array, int size);
+    void treeToArrayInOrder(T *array, int size);//to check
 };
 
 
