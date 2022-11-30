@@ -44,10 +44,10 @@ bool add_player_to_team_by_ID(std::shared_ptr<Player> player1);
 bool add_player_to_team_by_score(std::shared_ptr<Player> player1);
 bool remove_player_from_team_by_ID(std::shared_ptr<Player> player1);
 bool remove_player_from_team_by_Score(std::shared_ptr<Player> player1);
-bool find_player_by_ID(std::shared_ptr<Player> player1);
-bool find_player_by_score(std::shared_ptr<Player> player1);
-const std::shared_ptr<Player> find_max_by_ID();
+Node<std::shared_ptr<Player>>* find_player_by_score(std::shared_ptr<Player> player1);
+Node<std::shared_ptr<Player>>* find_player_by_ID(std::shared_ptr<Player> player1);
 const std::shared_ptr<Player> find_max_by_Score();
+void treeToArrayInOrder_for_team(std::shared_ptr<Player> * array,int size );
 
 };
 int compare_teams_by_id(std::shared_ptr<Team> team1, std::shared_ptr<Team>team2);

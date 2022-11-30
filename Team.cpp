@@ -33,10 +33,10 @@ bool Team::remove_player_from_team_by_Score(std::shared_ptr<Player> player1)
 {
     return players_in_team_by_id.remove(player1,&compare_players_by_ID);
 }
-bool Team::find_player_by_ID(std::shared_ptr<Player> player1){
+Node<std::shared_ptr<Player>>* Team::find_player_by_ID(std::shared_ptr<Player> player1){
     return players_in_team_by_id.find(player1,&compare_players_by_ID);
 }
-bool Team::find_player_by_score(std::shared_ptr<Player> player1){
+Node<std::shared_ptr<Player>>* Team::find_player_by_score(std::shared_ptr<Player> player1){
     return players_in_team_by_score.find(player1,&compare_players_by_Score);
 }
 const std::shared_ptr<Player> Team::find_max_by_ID() {
@@ -45,6 +45,10 @@ const std::shared_ptr<Player> Team::find_max_by_ID() {
 const std::shared_ptr<Player> Team::find_max_by_Score() {
     return players_in_team_by_score.findMax();
 }
+void Team::treeToArrayInOrder_for_team(std::shared_ptr<Player> * array,int size ){
+    return players_in_team_by_score.treeToArrayInOrder(array,size);
+}
+
 
 
 

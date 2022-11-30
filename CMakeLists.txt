@@ -10,7 +10,6 @@ add_executable(data_struct_ex1
         wet1util.h
         Player.cpp
         Team.cpp
-
         worldcup23a1.cpp
         worldcup23a1.h
         Team.h

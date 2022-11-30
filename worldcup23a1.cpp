@@ -161,144 +161,229 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
 {
     if(playerId<=0||gamesPlayed<0||scoredGoals<0||cardsReceived<0)//check input
         return StatusType::INVALID_INPUT;
-    std::shared_ptr<Player> player1(new Player(playerId, 0, 0, 0, 0, 0));
-    Node<shared_ptr<Player>> *n1 = players_tree_by_id.find(player1, &compare_players_by_ID);
-    if (n1 == nullptr)
-    {
-        return StatusType::FAILURE;
+    try {
+        std::shared_ptr<Player> player1(new Player(playerId, 0, 0, 0, 0, 0));
+        Node<shared_ptr<Player>> *n1 = players_tree_by_id.find(player1, &compare_players_by_ID);
+        if (n1 == nullptr) {
+            return StatusType::FAILURE;
+        }
+        if (players_tree_by_score.remove(n1->getData(), &compare_players_by_Score) == false)
+            return StatusType::FAILURE;
+        n1->getData()->set_global_left_closest(n1->getData()->get_global_right_closest());
+        n1->getData()->set_global_right_closest(n1->getData()->get_global_left_closest());
+        if (n1->getData()->get_team_pointer().lock()->remove_player_from_team_by_Score(n1->getData()) == false)
+            return StatusType::FAILURE;
+        n1->getData()->get_team_pointer().lock()->setsum_of_player_score(
+                n1->getData()->get_team_pointer().lock()->getsum_of_player_score() + -cardsReceived + scoredGoals);
+        n1->getData()->set_games_played(n1->getData()->get_games_played() + gamesPlayed);
+        n1->getData()->set_goals_scored(n1->getData()->get_goals_scored() + scoredGoals);
+        n1->getData()->set_cards(n1->getData()->get_cards() + cardsReceived);
+        if (players_tree_by_score.add(n1->getData(), &compare_players_by_Score,
+                                      n1->getData()->get_global_right_closest().lock()->get_global_left_closest().lock(),
+                                      n1->getData()->get_global_left_closest().lock()->get_global_right_closest().lock()) ==
+            false)
+            return StatusType::FAILURE;
+        if (n1->getData()->get_team_pointer().lock()->add_player_to_team_by_score(n1->getData()))
+            return StatusType::FAILURE;
+        if (n1->getData()->get_goals_scored() >
+            n1->getData()->get_team_pointer().lock()->getTeamTopScorer()->get_goals_scored()) {
+            n1->getData()->get_team_pointer().lock()->setTeamTopScorer(n1->getData());
+            if (n1->getData()->get_goals_scored() > top_scorer->get_goals_scored())
+                top_scorer = n1->getData();
+        }
+
+
+        return StatusType::SUCCESS;
     }
-    if(players_tree_by_score.remove(n1->getData(),&compare_players_by_Score)== false)
-        return StatusType::FAILURE;
-    n1->getData()->set_global_left_closest(n1->getData()->get_global_right_closest());
-    n1->getData()->set_global_right_closest(n1->getData()->get_global_left_closest());
-    if(n1->getData()->get_team_pointer().lock()->remove_player_from_team_by_Score(n1->getData())==false)
-        return StatusType::FAILURE;
-    n1->getData()->get_team_pointer().lock()->setsum_of_player_score(n1->getData()->get_team_pointer().lock()->getsum_of_player_score()+-cardsReceived+scoredGoals);
-    n1->getData()->set_games_played(n1->getData()->get_games_played()+gamesPlayed);
-    n1->getData()->set_goals_scored(n1->getData()->get_goals_scored()+scoredGoals);
-    n1->getData()->set_cards(n1->getData()->get_cards()+cardsReceived);
-    if(players_tree_by_score.add(n1->getData(),&compare_players_by_Score,n1->getData()->get_global_right_closest().lock()->get_global_left_closest().lock(),n1->getData()->get_global_left_closest().lock()->get_global_right_closest().lock())==false)
-        return StatusType::FAILURE;
-    if(n1->getData()->get_team_pointer().lock()->add_player_to_team_by_score(n1->getData()))
-        return StatusType::FAILURE;
-    if(n1->getData()->get_goals_scored()>n1->getData()->get_team_pointer().lock()->getTeamTopScorer()->get_goals_scored()) {
-        n1->getData()->get_team_pointer().lock()->setTeamTopScorer(n1->getData());
-    if(n1->getData()->get_goals_scored()>top_scorer->get_goals_scored())
-        top_scorer=n1->getData();
-    }
-
-
-
-    return StatusType::SUCCESS;
-}
+    catch (std::bad_alloc){
+        return StatusType::ALLOCATION_ERROR;
+}}
 
 StatusType world_cup_t::play_match(int teamId1, int teamId2)
 {
     if(teamId1<=0||teamId2<=0||teamId1==teamId2)
         return StatusType::INVALID_INPUT;
-    std::shared_ptr<Team> team1(new Team(teamId1, 0));
-    Node<shared_ptr<Team>> *n1 = current_active_teams.find(team1, &compare_teams_by_id);
-    std::shared_ptr<Team> team2(new Team(teamId2, 0));
-    Node<shared_ptr<Team>> *n2 = current_active_teams.find(team2, &compare_teams_by_id);
-    if (n1 == nullptr || n2 == nullptr)
-        return StatusType::FAILURE;
-    n1->getData()->setAdditionalGamesPlayed(n1->getData()->getAdditionalGamesPlayed()+1);
-    n2->getData()->setAdditionalGamesPlayed(n2->getData()->getAdditionalGamesPlayed()+1);
-    if(n1->getData()->getTeamPoints()+n1->getData()->getsum_of_player_score()>n2->getData()->getTeamPoints()+n2->getData()->getsum_of_player_score()){
-    n1->getData()->setTeamPoints(n1->getData()->getTeamPoints()+3);
+    try {
+        std::shared_ptr<Team> team1(new Team(teamId1, 0));
+        Node<shared_ptr<Team>> *n1 = current_active_teams.find(team1, &compare_teams_by_id);
+        std::shared_ptr<Team> team2(new Team(teamId2, 0));
+        Node<shared_ptr<Team>> *n2 = current_active_teams.find(team2, &compare_teams_by_id);
+        if (n1 == nullptr || n2 == nullptr)
+            return StatusType::FAILURE;
+        n1->getData()->setAdditionalGamesPlayed(n1->getData()->getAdditionalGamesPlayed() + 1);
+        n2->getData()->setAdditionalGamesPlayed(n2->getData()->getAdditionalGamesPlayed() + 1);
+        if (n1->getData()->getTeamPoints() + n1->getData()->getsum_of_player_score() >
+            n2->getData()->getTeamPoints() + n2->getData()->getsum_of_player_score()) {
+            n1->getData()->setTeamPoints(n1->getData()->getTeamPoints() + 3);
+        } else if (n1->getData()->getTeamPoints() + n1->getData()->getsum_of_player_score() <
+                   n2->getData()->getTeamPoints() + n2->getData()->getsum_of_player_score()) {
+            n2->getData()->setTeamPoints(n2->getData()->getTeamPoints() + 3);
+        } else {
+            n1->getData()->setTeamPoints(n1->getData()->getTeamPoints() + 1);
+            n2->getData()->setTeamPoints(n2->getData()->getTeamPoints() + 1);
+        }
+
+        return StatusType::SUCCESS;
     }
-    else if(n1->getData()->getTeamPoints()+n1->getData()->getsum_of_player_score()<n2->getData()->getTeamPoints()+n2->getData()->getsum_of_player_score()) {
-        n2->getData()->setTeamPoints(n2->getData()->getTeamPoints()+3);
+    catch (std::bad_alloc){
+        return StatusType::ALLOCATION_ERROR;
     }
-    else {
-        n1->getData()->setTeamPoints(n1->getData()->getTeamPoints() + 1);
-        n2->getData()->setTeamPoints(n2->getData()->getTeamPoints() + 1);
-    }
+
+
+
+
 
     return StatusType::SUCCESS;
-
-
-
-
-
-    return StatusType::SUCCESS;
 }
 
-output_t<int> world_cup_t::get_num_played_games(int playerId)
-{
-    if(playerId<=0)
+output_t<int> world_cup_t::get_num_played_games(int playerId) {
+    if (playerId <= 0)
         return output_t<int>(StatusType::INVALID_INPUT);
-    std::shared_ptr<Player> player1(new Player(playerId, 0, 0, 0, 0, 0));
-    Node<shared_ptr<Player>> *n1 = players_tree_by_id.find(player1, &compare_players_by_ID);
-    if (n1 == nullptr)
-        return output_t<int>(StatusType::FAILURE);
-	int value=n1->getData()->get_games_played()+n1->getData()->get_team_pointer().lock()->getAdditionalGamesPlayed();
-    return output_t<int>(value);
+    try {
+        std::shared_ptr<Player> player1(new Player(playerId, 0, 0, 0, 0, 0));
+        Node<shared_ptr<Player>> *n1 = players_tree_by_id.find(player1, &compare_players_by_ID);
+        if (n1 == nullptr)
+            return output_t<int>(StatusType::FAILURE);
+        int value = n1->getData()->get_games_played() +
+                    n1->getData()->get_team_pointer().lock()->getAdditionalGamesPlayed();
+        return output_t<int>(value);
+    }
+    catch (std::bad_alloc) {
+        return output_t<int>(StatusType::ALLOCATION_ERROR);}
 }
-
-output_t<int> world_cup_t::get_team_points(int teamId)
-{
-    if(teamId<=0)
+output_t<int> world_cup_t::get_team_points(int teamId) {
+    if (teamId <= 0)
         return output_t<int>(StatusType::INVALID_INPUT);
-    std::shared_ptr<Team> team1(new Team(teamId,0));
-    Node<shared_ptr<Team>> *n1 = teams_tree.find(team1, &compare_teams_by_id);
-    if (n1 == nullptr)
-        return output_t<int>(StatusType::FAILURE);
-    int value=n1->getData()->getTeamPoints();
-    return output_t<int>(value);
+    try {
+        std::shared_ptr<Team> team1(new Team(teamId, 0));
+        Node<shared_ptr<Team>> *n1 = teams_tree.find(team1, &compare_teams_by_id);
+        if (n1 == nullptr)
+            return output_t<int>(StatusType::FAILURE);
+        int value = n1->getData()->getTeamPoints();
+        return output_t<int>(value);
+    }
+    catch (std::bad_alloc) {
+        return output_t<int>(StatusType::ALLOCATION_ERROR);
+    }
 }
-
-
 StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
 {
 	// TODO: Your code goes here
 	return StatusType::SUCCESS;
 }
 
-output_t<int> world_cup_t::get_top_scorer(int teamId)
-{
-    if(teamId=0)
+output_t<int> world_cup_t::get_top_scorer(int teamId) {
+    if (teamId == 0)
         return output_t<int>(StatusType::INVALID_INPUT);
-    if(teamId<0)
-        return output_t<int>(top_scorer->get_player_ID());
-    if(teamId>0)
-    {
-        std::shared_ptr<Team> team1(new Team(teamId,0));
-        Node<shared_ptr<Team>> *n1 = teams_tree.find(team1, &compare_teams_by_id);
-        if (n1 == nullptr)
-            return output_t<int>(StatusType::FAILURE);
-        return output_t<int>(n1->getData()->getTeamTopScorer()->get_player_ID());
+    try {
+        if (teamId < 0)
+            return output_t<int>(top_scorer->get_player_ID());
+        if (teamId > 0) {
+            std::shared_ptr<Team> team1(new Team(teamId, 0));
+            Node<shared_ptr<Team>> *n1 = teams_tree.find(team1, &compare_teams_by_id);
+            if (n1 == nullptr)
+                return output_t<int>(StatusType::FAILURE);
+            return output_t<int>(n1->getData()->getTeamTopScorer()->get_player_ID());
 
+        }
+    }
+    catch(std::bad_alloc){
+        return output_t<int>(StatusType::ALLOCATION_ERROR);
     }
 }
-
-output_t<int> world_cup_t::get_all_players_count(int teamId)
-{
-    if(teamId==0)
+output_t<int> world_cup_t::get_all_players_count(int teamId) {
+    if (teamId == 0)
         return output_t<int>(StatusType::INVALID_INPUT);
-    if(teamId<0)
-        return output_t<int>(total_players_counter);
-    if(teamId>0)
-    {
-        std::shared_ptr<Team> team1(new Team(teamId,0));
-        Node<shared_ptr<Team>> *n1 = teams_tree.find(team1, &compare_teams_by_id);
-        if (n1 == nullptr)
-            return output_t<int>(StatusType::FAILURE);
-        return output_t<int>(n1->getData()->getPlayerCount());
-}
+    try {
+        if (teamId < 0)
+            return output_t<int>(total_players_counter);
+        if (teamId > 0) {
+            std::shared_ptr<Team> team1(new Team(teamId, 0));
+            Node<shared_ptr<Team>> *n1 = teams_tree.find(team1, &compare_teams_by_id);
+            if (n1 == nullptr)
+                return output_t<int>(StatusType::FAILURE);
+            return output_t<int>(n1->getData()->getPlayerCount());
+        }
+    }
+    catch (std::bad_alloc) {
+        return output_t<int>(StatusType::ALLOCATION_ERROR);
+    }
 }
 
 StatusType world_cup_t::get_all_players(int teamId, int *const output)
 {
+    if(output==nullptr||teamId==0)
+        return StatusType::INVALID_INPUT;
+    try {
+        if(teamId>0) {
+            std::shared_ptr<Team> team1(new Team(teamId, 0));
+            Node<shared_ptr<Team>> *n1 = teams_tree.find(team1, &compare_teams_by_id);
+            if (n1 == nullptr || n1->getData()->getPlayerCount() == 0)
+                return StatusType::FAILURE;
+            shared_ptr<Player> *player_arr = new shared_ptr<Player>[n1->getData()->getPlayerCount()];
+            n1->getData()->treeToArrayInOrder_for_team(player_arr, n1->getData()->getPlayerCount());
+            for (int i = 0; i < n1->getData()->getPlayerCount(); i++)
+                output[i] = player_arr[i]->get_player_ID();
+        }
+            if(teamId>0)
+        {
+            if(total_players_counter==0)
+                return StatusType::FAILURE;
+            shared_ptr<Player>* player_arr=new shared_ptr<Player>[total_players_counter];
+            players_tree_by_score.treeToArrayInOrder(player_arr,total_players_counter);
+            for(int i=0; i<total_players_counter;i++) {
+                output[i] = player_arr[i]->get_player_ID();
+            }
+        }
 
-    output[0] = 4001;
-    output[1] = 4002;
-	return StatusType::SUCCESS;
+
+        return StatusType::SUCCESS;
+        }
+    catch (std::bad_alloc) {
+        return StatusType::ALLOCATION_ERROR;
+    }
+
 }
 
 output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
 {
-	// TODO: Your code goes here
+	if(playerId<=0||teamId<=0)
+        return output_t<int>(StatusType::INVALID_INPUT);
+    try{
+        std::shared_ptr<Team> team1(new Team(teamId, 0));
+        Node<shared_ptr<Team>> *n1 = teams_tree.find(team1, &compare_teams_by_id);
+        std::shared_ptr<Player> player1(new Player(playerId, 0, 0, 0, teamId, 0));
+        if (n1 == nullptr )
+            return StatusType::FAILURE;
+        Node<shared_ptr<Player>> *n2 =n1->getData()->find_player_by_ID(player1);
+        if (n2 == nullptr|| total_players_counter == 1)
+            return StatusType::FAILURE;
+        if(n2->getData()->get_global_right_closest().lock()==nullptr)
+            return output_t<int>(n2->getData()->get_global_left_closest().lock()->get_player_ID());
+        if(n2->getData()->get_global_left_closest().lock()==nullptr)
+            return output_t<int>(n2->getData()->get_global_right_closest().lock()->get_player_ID());
+        if((n2->getData()->get_global_right_closest().lock()->get_goals_scored()-n2->getData()->get_goals_scored())<(n2->getData()->get_goals_scored()-n2->getData()->get_global_left_closest().lock()->get_goals_scored()))
+            return output_t<int>(n2->getData()->get_global_right_closest().lock()->get_player_ID());
+        if((n2->getData()->get_global_right_closest().lock()->get_goals_scored()-n2->getData()->get_goals_scored())>(n2->getData()->get_goals_scored()-n2->getData()->get_global_left_closest().lock()->get_goals_scored()))
+            return output_t<int>(n2->getData()->get_global_left_closest().lock()->get_player_ID());
+        if((n2->getData()->get_global_right_closest().lock()->get_cards()-n2->getData()->get_cards())>(n2->getData()->get_cards()-n2->getData()->get_global_left_closest().lock()->get_cards()))
+            return output_t<int>(n2->getData()->get_global_right_closest().lock()->get_player_ID());
+        if((n2->getData()->get_global_right_closest().lock()->get_cards()-n2->getData()->get_cards())<(n2->getData()->get_cards()-n2->getData()->get_global_left_closest().lock()->get_cards()))
+            return output_t<int>(n2->getData()->get_global_right_closest().lock()->get_player_ID());
+        if((n2->getData()->get_global_right_closest().lock()->get_player_ID()-n2->getData()->get_player_ID())<(n2->getData()->get_player_ID()-n2->getData()->get_global_left_closest().lock()->get_player_ID()))
+            return output_t<int>(n2->getData()->get_global_right_closest().lock()->get_player_ID());
+        if((n2->getData()->get_global_right_closest().lock()->get_player_ID()-n2->getData()->get_player_ID())>(n2->getData()->get_player_ID()-n2->getData()->get_global_left_closest().lock()->get_player_ID()))
+            return output_t<int>(n2->getData()->get_global_left_closest().lock()->get_player_ID());
+        return output_t<int>(n2->getData()->get_global_right_closest().lock()->get_player_ID());
+
+
+
+
+
+    }
+    catch(std::bad_alloc){
+        return output_t<int>(StatusType::ALLOCATION_ERROR);
+    }
 	return 1006;
 }
 
