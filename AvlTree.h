@@ -161,7 +161,7 @@ bool AvlTree<T>::add(const T &value,int (*compare)(T,T)) {
 
         }
         catch(std::bad_alloc&){
-            return false;
+            throw;
         }
         return true;
     }
@@ -184,7 +184,7 @@ bool AvlTree<T>::add(const T &value, int (*compare)(T, T), const T &left, const 
 
         }
         catch(std::bad_alloc&){
-            return false;
+            throw;
         }
         left = nullptr;
         right = nullptr;
@@ -210,7 +210,7 @@ Node<T> *AvlTree<T>::insert(const T &value, Node<T> *current_node, int (*compare
         }
         catch (const std::bad_alloc&) {
             delete new_node;
-            return nullptr;
+            throw;
         }
         return new_node;
     }
@@ -463,7 +463,7 @@ AvlTree<T>::insert(const T &value, Node<T> *current_node, int (*compare)(T, T), 
         }
         catch (const std::bad_alloc&) {
             delete new_node;
-            return nullptr;
+            throw;
         }
         return new_node;
     }
@@ -510,11 +510,14 @@ int AvlTree<T>::treeToArrayInOrder(Node<T> *node,T array[]  , int i){
 
 template<typename T>
 bool AvlTree<T>::createTreeFromSortedArray(T *array, int size) {
+    if(size != size(this->_root)){
+        return false;
+    }
     try{
         this->_root = createTreeFromSortedArray(array,0,size);
     }
     catch (const std::bad_alloc&) {
-        return false;
+        throw;
     }
     return true;
 }
