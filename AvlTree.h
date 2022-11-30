@@ -1,6 +1,7 @@
 #ifndef DATA_STRUCT_EX1_AVLTREE_H
 #define DATA_STRUCT_EX1_AVLTREE_H
 #include <iostream>
+#include <memory>
 using namespace std;
 
 
@@ -10,7 +11,7 @@ class Node{
 
     private:
     int BF{}; // the balanceFactor of the tree note : _bf is reserved by the language
-    T _data;
+    T* _data;
     int _height{};
     Node<T>* _left;
     Node<T>* _right;
@@ -19,11 +20,11 @@ class Node{
     
     public:
     explicit Node(const T& data) ;
-    Node(const T& data, Node<T>* left, Node<T>* right, Node<T> parent) ; // to check
+    Node(const T& data, Node<T>* left, Node<T>* right, Node<T> parent) ;
     ~Node();
     int getBF();
     int getheight();
-    const T& getData();
+    T& getData();
     void setBF(int BF);
     Node<T>* getLeft();
     void print() const ;
@@ -52,17 +53,17 @@ class  AvlTree{
     int treeToArrayInOrder(Node<T> *node,T array[]  , int i); // when called should set  i=0;
     Node<T>* find(Node<T>* current_node,const T& value ,int (*compare)(T,T));
     Node<T>* insert(const T& value,Node<T>* current_node, int (*compare)(T,T)); // the recursive private function that inserts the node
-    Node<T>* insert(const T& value ,Node<T>* current_node ,int (*compare)(T,T),const T& left , const T& right); // to check
+    Node<T>* insert(const T& value ,Node<T>* current_node ,int (*compare)(T,T),weak_ptr<T> left ,  weak_ptr<T> right);
     Node<T>* remove(Node<T>* current_node,const T& value, int (*compare)(T,T)); // the recursive private function
-    Node<T>* createTreeFromSortedArray(T *array, int start, int end);// to check
+    Node<T>* createTreeFromSortedArray(T *array, int start, int end);
     Node<T>* balance(Node<T>* current_node); // handles the rotation of the tree
 
 
     void update(Node<T>* node); // updates the height of the node and the BFactor
+    int size(Node<T> *node) const;
     void printSubtree(Node<T>* root ,const string& prefix);
     const T& findMax(Node<T>* node); // to check
     const T& findMin(Node<T>* node);// to check
-    int size(Node<T> *node) const;// to check
 
 
     Node<T>* LLR(Node<T>* node); //Left-left rotation of the tree
@@ -72,6 +73,8 @@ class  AvlTree{
 
 
     public:
+
+
     AvlTree();
     ~AvlTree();
     const T& findMax();// to check
@@ -79,20 +82,16 @@ class  AvlTree{
     Node<T>* getRoot();
     int height(Node<T>* node);
     int BalanceFactor(Node<T>* node);
-
+    void treeToArrayInOrder(T *array, int size);
     Node<T>* RotateLeft(Node<T>* node);
     Node<T>* RotateRight(Node<T>* node);
-    void print();//prints the tree (copied from the internet)
+    void print();//prints the tree
     bool add(const T& value, int (*compare)(T,T));
     bool remove(const T& value, int (*compare)(T,T));
     bool createTreeFromSortedArray(T array[] ,int size); // to check
 
     Node<T>* find(const T& value, int (*compare)(T,T)); // calls private find with the root
-
-    bool add(const T& value, int (*compare)(T,T),const T& left , const T& right);// to check
-
-
-    void treeToArrayInOrder(T *array, int size);//to check
+    bool add(const T& value, int (*compare)(T,T),weak_ptr<T> left ,  weak_ptr<T> right);
 };
 
 
@@ -174,7 +173,7 @@ bool AvlTree<T>::add(const T &value,int (*compare)(T,T)) {
 
 }
 template<typename T>
-bool AvlTree<T>::add(const T &value, int (*compare)(T, T), const T &left, const T &right) {
+bool AvlTree<T>::add(const T &value, int (*compare)(T, T),weak_ptr<T> left ,  weak_ptr<T> right) {
     if(compare==nullptr){
         return false;
     }
@@ -186,8 +185,8 @@ bool AvlTree<T>::add(const T &value, int (*compare)(T, T), const T &left, const 
         catch(std::bad_alloc&){
             throw;
         }
-        left = nullptr;
-        right = nullptr;
+        left.reset();
+        right.reset();
         return true;
     }
     Node<T>* temp = this->find(value ,compare);
@@ -195,6 +194,12 @@ bool AvlTree<T>::add(const T &value, int (*compare)(T, T), const T &left, const 
         return false; // already added
     }
     this->_root = insert(value, this->_root , compare,left,right);
+    if(left.expired()){
+        left.swap(this->_root->getData());
+    }
+    if(right == nullptr) {
+        right.swap(this->_root->getData());
+    }
     return true;
 }
 
@@ -452,7 +457,7 @@ const T &AvlTree<T>::findMin() {
 
 template<typename T>
 Node<T> *
-AvlTree<T>::insert(const T &value, Node<T> *current_node, int (*compare)(T, T), const T &left, const T &right) {
+AvlTree<T>::insert(const T &value, Node<T> *current_node, int (*compare)(T, T),weak_ptr<T> left ,  weak_ptr<T> right) {
     if(compare == nullptr){
         return  nullptr;
     }
@@ -468,12 +473,12 @@ AvlTree<T>::insert(const T &value, Node<T> *current_node, int (*compare)(T, T), 
         return new_node;
     }
     if(compare(current_node->getData() , value)==-1){//current_node->getData() > value
-        left = current_node->getData();
-        current_node->setLeft(insert(value, current_node->getLeft() ,compare));
+        left.swap(current_node->getData());
+        current_node->setLeft(insert(value, current_node->getLeft() ,compare,left,right));
     }
     else{
-        right = current_node->getData();
-        current_node->setRight(insert(value, current_node->getRight(),compare));
+        right.swap(current_node->getData());
+        current_node->setRight(insert(value, current_node->getRight(),compare,left,right));
     }
     update(current_node);
     return  balance(current_node);
@@ -494,27 +499,29 @@ void AvlTree<T>::treeToArrayInOrder( T *array, int size) {
     if(array == nullptr){
         return;
     }
-    treeToArrayInOrder(this->_root, array,size);
+    treeToArrayInOrder(this->_root, array,0);
 }
 
 template<typename T>
 int AvlTree<T>::treeToArrayInOrder(Node<T> *node,T array[]  , int i){
     if (node== nullptr)
         return i;
-    i = inorder(node->getRight(), array, i);
+    i = treeToArrayInOrder(node->getLeft(), array, i);
     array[i++] = node->getData();
-    i = inorder(node->getLeft(), array, i);
+    i = treeToArrayInOrder(node->getRight(), array, i);
+
     return i;
 
 }
 
 template<typename T>
-bool AvlTree<T>::createTreeFromSortedArray(T *array, int size) {
-    if(size != size(this->_root)){
-        return false;
-    }
+bool AvlTree<T>::createTreeFromSortedArray(T *array, int size1) {
     try{
-        this->_root = createTreeFromSortedArray(array,0,size);
+        Node<T> *temp  = createTreeFromSortedArray(array,0,size1-1);
+        // size start at 1  , array start at 0
+        delete this->_root;
+        this->_root = temp;
+
     }
     catch (const std::bad_alloc&) {
         throw;
@@ -531,9 +538,9 @@ Node<T>* AvlTree<T>::createTreeFromSortedArray(T *array, int start, int end) {
     int mid = (start + end)/2;
     Node<T> *root = nullptr;
     try {
-        root = newNode(array[mid]);
-        root->setLeft(sortedArrayToBST(array, start,mid - 1));
-        root->setRight(sortedArrayToBST(array, mid + 1, end));
+        root = new Node<T>(array[mid]);
+        root->setLeft(createTreeFromSortedArray(array, start,mid - 1));
+        root->setRight(createTreeFromSortedArray(array, mid + 1, end));
     }
     catch (const std::bad_alloc&) {
         throw std::bad_alloc();
@@ -543,7 +550,7 @@ Node<T>* AvlTree<T>::createTreeFromSortedArray(T *array, int start, int end) {
 
 template<typename T>
 Node<T>::Node(const T &data) {
-    this->_data = data;
+    this->_data = new T(data);
     this->_right = nullptr;
     this->_left = nullptr;
     this->_parent = nullptr;
@@ -553,7 +560,7 @@ Node<T>::Node(const T &data) {
 
 template<typename T>
 Node<T>::Node(const T &data, Node<T> *left, Node<T> *right, Node<T> parent) {
-    this->_data = data;
+    this->_data = new T(data);
     this->_left = left;
     this->_right = right;
     this->_parent = parent;
@@ -569,11 +576,12 @@ Node<T>::~Node() {
     if(this->_left != nullptr){
         delete this->_left;
     }
+    delete this->_data;
 }
 
 template<typename T>
-const T &Node<T>::getData() {
-    return this->_data;
+T &Node<T>::getData() {
+    return *this->_data;
 }
 
 template<typename T>
@@ -607,12 +615,13 @@ void Node<T>::setParent(Node<T> *parent) {
 
 template<typename T>
 void Node<T>::setData(const T &data) {
-    this->_data = data;
+    delete this->_data;
+    this->_data = new T(data);
 }
 
 template<typename T>
 void Node<T>::print() const {
-    std::cout << this->_data << std::endl;
+    std::cout << *this->_data << std::endl;
 }
 
 template<typename T>
