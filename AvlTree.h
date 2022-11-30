@@ -45,7 +45,7 @@ class Node{
 
 template<typename T>
 class  AvlTree{
-
+    //TODO: max in range , min in range , the pointer add thing . GL
 
     private:
     Node<T>* _root;
