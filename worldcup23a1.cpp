@@ -49,7 +49,6 @@ StatusType world_cup_t::remove_team(int teamId)
     catch (std::bad_alloc&){
         return StatusType::ALLOCATION_ERROR;
     }
-    return StatusType::SUCCESS;
 }
 
 StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
@@ -60,38 +59,50 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         return StatusType::INVALID_INPUT;
     if(gamesPlayed=0&&(goals>0||cards>0))
         return StatusType::INVALID_INPUT;
-    try{
+    try {
         //create variables and find the team
-        std::shared_ptr<Player> player1 (new Player(playerId,teamId,gamesPlayed,goals,cards,goalKeeper));
-        std::shared_ptr<Team> team_copy (new Team(teamId,0));
-        Node<shared_ptr<Team>> *n1=teams_tree.find(team_copy,&compare_teams_by_id);
-        if(n1==nullptr)
-        {
+        std::shared_ptr<Player> player1(new Player(playerId, teamId, gamesPlayed, goals, cards, goalKeeper));
+        std::shared_ptr<Team> team_copy(new Team(teamId, 0));
+        Node<shared_ptr<Team>> *n1 = teams_tree.find(team_copy, &compare_teams_by_id);
+        if (n1 == nullptr) {
             return StatusType::FAILURE;
         }
         //initialize the correct teampointer for the player
         player1->set_team_pointer(n1->getData());
-        if(player1->get_team_pointer().lock()->add_player_to_team_by_ID(player1)==false)//put in player_in_team_by_id
+        if (player1->get_team_pointer().lock()->add_player_to_team_by_ID(player1) == false)//put in player_in_team_by_id
             return StatusType::FAILURE;
-        if(player1->get_team_pointer().lock()->add_player_to_team_by_score(player1)==false)//put in player_in_team_by_score
+        if (player1->get_team_pointer().lock()->add_player_to_team_by_score(player1) ==
+            false)//put in player_in_team_by_score
             return StatusType::FAILURE;
-        if(players_tree_by_id.add(player1,&compare_players_by_ID)==false)//put in player_tree_by_id
+        if (players_tree_by_id.add(player1, &compare_players_by_ID) == false)//put in player_tree_by_id
             return StatusType::FAILURE;
-        if(players_tree_by_score.add(player1,&compare_players_by_Score,player1->get_global_left_closest().lock(),player1->get_global_right_closest().lock())==false) //put in player_tree_by_score
+        if (players_tree_by_score.add(player1, &compare_players_by_Score, player1->get_global_left_closest().lock(),
+                                      player1->get_global_right_closest().lock()) ==
+            false) //put in player_tree_by_score
             return StatusType::FAILURE;
-        player1->set_games_played(gamesPlayed-player1->get_team_pointer().lock()->getAdditionalGamesPlayed());//set games played
-        player1->get_team_pointer().lock()->setsum_of_player_score((player1->get_team_pointer().lock()->getsum_of_player_score())+(player1->get_goals_scored()-player1->get_cards()));//set sum of players score for team
-        if(player1->get_team_pointer().lock()->getTeamTopScorer()->get_goals_scored()<player1->get_goals_scored()) {//check if it new team_top_scorer
-            player1->get_team_pointer().lock()->setTeamTopScorer(player1);
-            if (top_scorer->get_goals_scored() < player1->get_goals_scored())// check if it new top scorer
-                top_scorer=player1;
+        player1->get_global_right_closest().lock()->set_global_left_closest(player1);
+        player1->get_global_left_closest().lock()->set_global_right_closest(player1);
+        player1->set_games_played(
+                gamesPlayed - player1->get_team_pointer().lock()->getAdditionalGamesPlayed());//set games played
+        player1->get_team_pointer().lock()->setsum_of_player_score(
+                (player1->get_team_pointer().lock()->getsum_of_player_score()) +
+                (player1->get_goals_scored() - player1->get_cards()));//set sum of players score for team
+            if(compare_players_by_Score(player1->get_team_pointer().lock()->getTeamTopScorer(),player1)==1){
+                player1->get_team_pointer().lock()->setTeamTopScorer(player1);
+        if (compare_players_by_Score(top_scorer,player1)==1)// check if it new top scorer
+                top_scorer = player1;
         }
         total_players_counter++;//add 1 to total_players_counter
-        player1->get_team_pointer().lock()->setPlayerCount(player1->get_team_pointer().lock()->getPlayerCount()+1);//add 1 to team_players_count;
-        if(player1->get_is_goalkeeper()==true)
-            player1->get_team_pointer().lock()->setGoalkeeperCount(player1->get_team_pointer().lock()->getGoalkeeperCount()+1);//if player is goalkeeper add 1 to team's goalkeeper count
-        if(player1->get_team_pointer().lock()->getGoalkeeperCount()>0&&player1->get_team_pointer().lock()->getPlayerCount()>10)//add team to current active teams if suitable
-            current_active_teams.add(player1->get_team_pointer().lock(),&compare_teams_by_id,player1->get_team_pointer().lock()->getglobal_left_closest_team().lock(),player1->get_team_pointer().lock()->getglobal_right_closest_team().lock());
+        player1->get_team_pointer().lock()->setPlayerCount(
+                player1->get_team_pointer().lock()->getPlayerCount() + 1);//add 1 to team_players_count;
+        if (player1->get_is_goalkeeper() == true)
+            player1->get_team_pointer().lock()->setGoalkeeperCount(player1->get_team_pointer().lock()->getGoalkeeperCount() +1);//if player is goalkeeper add 1 to team's goalkeeper count
+        if (player1->get_team_pointer().lock()->getGoalkeeperCount() > 0 &&player1->get_team_pointer().lock()->getPlayerCount() > 10) {//add team to current active teams if suitable
+            current_active_teams.add(player1->get_team_pointer().lock(), &compare_teams_by_id,player1->get_team_pointer().lock()->getglobal_left_closest_team().lock(),player1->get_team_pointer().lock()->getglobal_right_closest_team().lock());
+            player1->get_team_pointer().lock()->getglobal_left_closest_team().lock()->setglobal_right_closest_team(player1->get_team_pointer().lock());
+            player1->get_team_pointer().lock()->getglobal_right_closest_team().lock()->setglobal_left_closest_team(player1->get_team_pointer().lock());
+
+        }
     }
 
     catch(std::bad_alloc)
@@ -183,14 +194,16 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
                                       n1->getData()->get_global_left_closest().lock()->get_global_right_closest().lock()) ==
             false)
             return StatusType::FAILURE;
+        n1->getData()->get_global_left_closest().lock()->set_global_right_closest(n1->getData());
+        n1->getData()->get_global_right_closest().lock()->set_global_left_closest(n1->getData());
         if (n1->getData()->get_team_pointer().lock()->add_player_to_team_by_score(n1->getData()))
             return StatusType::FAILURE;
-        if (n1->getData()->get_goals_scored() >
-            n1->getData()->get_team_pointer().lock()->getTeamTopScorer()->get_goals_scored()) {
-            n1->getData()->get_team_pointer().lock()->setTeamTopScorer(n1->getData());
-            if (n1->getData()->get_goals_scored() > top_scorer->get_goals_scored())
+        if(compare_players_by_Score(n1->getData()->get_team_pointer().lock()->getTeamTopScorer(),n1->getData())==1){
+                n1->getData()->get_team_pointer().lock()->setTeamTopScorer(n1->getData());
+            if (compare_players_by_Score(top_scorer, n1->getData())==1)// check if it new top scorer
                 top_scorer = n1->getData();
         }
+
 
 
         return StatusType::SUCCESS;
@@ -268,9 +281,108 @@ output_t<int> world_cup_t::get_team_points(int teamId) {
 }
 StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
 {
-	// TODO: Your code goes here
+	if(teamId1<=0||teamId2<=0||newTeamId<=0)
+        return StatusType::INVALID_INPUT;
+    try{
+        std::shared_ptr<Team> team1(new Team(teamId1, 0));
+        Node<shared_ptr<Team>> *n1 = teams_tree.find(team1, &compare_teams_by_id);
+        std::shared_ptr<Team> team2(new Team(teamId2, 0));
+        Node<shared_ptr<Team>> *n2 = teams_tree.find(team2, &compare_teams_by_id);
+        if (n1 == nullptr || n2 == nullptr)
+            return StatusType::FAILURE;
+        std::shared_ptr<Team> new_team(new Team(newTeamId,n1->getData()->getTeamPoints()+n2->getData()->getTeamPoints()));
+        if(teams_tree.add(new_team,&compare_teams_by_id)== false)
+            return StatusType::FAILURE;
+        new_team->setsum_of_player_score(n1->getData()->getsum_of_player_score()+n2->getData()->getsum_of_player_score());
+        new_team->setGoalkeeperCount(n1->getData()->getGoalkeeperCount()+n2->getData()->getGoalkeeperCount());
+        new_team->setPlayerCount(n1->getData()->getPlayerCount()+n2->getData()->getPlayerCount());
+        if(compare_players_by_Score((n1->getData()->getTeamTopScorer()),n2->getData()->getTeamTopScorer())==-1)
+            new_team->setTeamTopScorer(n1->getData()->getTeamTopScorer());
+        if(compare_players_by_Score((n1->getData()->getTeamTopScorer()),n2->getData()->getTeamTopScorer())==1)
+            new_team->setTeamTopScorer(n2->getData()->getTeamTopScorer());
+        shared_ptr<Player> *player_arr1_byId = new shared_ptr<Player>[n1->getData()->getPlayerCount()];
+        shared_ptr<Player> *player_arr1_byScore = new shared_ptr<Player>[n1->getData()->getPlayerCount()];
+        shared_ptr<Player> *player_arr2_byId = new shared_ptr<Player>[n2->getData()->getPlayerCount()];
+        shared_ptr<Player> *player_arr2_byScore = new shared_ptr<Player>[n2->getData()->getPlayerCount()];
+        shared_ptr<Player> *finalarray_byId = new shared_ptr<Player>[n1->getData()->getPlayerCount()+n2->getData()->getPlayerCount()];
+        shared_ptr<Player> *finalarray_byScore = new shared_ptr<Player>[n1->getData()->getPlayerCount()+n2->getData()->getPlayerCount()];
+        n1->getData()->treeToArrayInOrder_for_team_byId(player_arr1_byId,n1->getData()->getPlayerCount());
+        n2->getData()->treeToArrayInOrder_for_team_byId(player_arr2_byId,n2->getData()->getPlayerCount());
+        n1->getData()->treeToArrayInOrder_for_team_byscore(player_arr1_byScore,n1->getData()->getPlayerCount());
+        n2->getData()->treeToArrayInOrder_for_team_byscore(player_arr2_byScore,n2->getData()->getPlayerCount());
+        for(int i=0;i<n1->getData()->getPlayerCount();i++){
+            player_arr1_byId[i]->set_games_played(player_arr1_byId[i]->get_games_played()+n1->getData()->getAdditionalGamesPlayed());
+        }
+        n1->getData()->setAdditionalGamesPlayed(0);
+        for(int i=0;i<n2->getData()->getPlayerCount();i++){
+            player_arr2_byScore[i]->set_games_played(player_arr2_byScore[i]->get_games_played()+n1->getData()->getAdditionalGamesPlayed());
+        }
+        n2->getData()->setAdditionalGamesPlayed(0);
+        int i=0,j=0;
+        while(i<n1->getData()->getPlayerCount()||j<n2->getData()->getPlayerCount()){
+        if(i>=n1->getData()->getPlayerCount()){
+            finalarray_byId[i+j]=player_arr2_byId[j];
+            j++;
+        }
+        else if(j>=n2->getData()->getPlayerCount())
+            finalarray_byId[i+j]=player_arr2_byId[i];
+        else {
+            if (compare_players_by_ID(player_arr1_byId[i], player_arr2_byId[j]) == -1)
+                finalarray_byId[i + j] = player_arr2_byId[j];
+            if (compare_players_by_ID(player_arr1_byId[i], player_arr2_byId[j]) == 1)
+                finalarray_byId[i + j] = player_arr1_byId[i];
+            i++;
+            j++;
+
+
+        }
+        }
+        i=0;
+        j=0;
+        while(i<n1->getData()->getPlayerCount()||j<n2->getData()->getPlayerCount()){
+            if(i>=n1->getData()->getPlayerCount()){
+                finalarray_byScore[i+j]=player_arr2_byScore[j];
+                j++;
+            }
+            else if(j>=n2->getData()->getPlayerCount())
+                finalarray_byScore[i+j]=player_arr2_byScore[i];
+            else {
+                if (compare_players_by_Score(player_arr1_byScore[i], player_arr2_byScore[j]) == -1)
+                    finalarray_byScore[i + j] = player_arr2_byScore[j];
+                if (compare_players_by_Score(player_arr1_byScore[i], player_arr2_byScore[j]) == 1)
+                    finalarray_byScore[i + j] = player_arr1_byScore[i];
+                i++;
+                j++;
+
+
+            }
+        }
+        if(new_team->create_tree_from_array_by_Id(finalarray_byId,(n1->getData()->getPlayerCount()+n2->getData()->getPlayerCount()))==false)
+            return StatusType::FAILURE;
+        if(new_team->create_tree_from_array_by_Score(finalarray_byScore,n2->getData()->getPlayerCount()+n2->getData()->getPlayerCount())==false)
+            return StatusType::FAILURE;
+
+        if(new_team->getPlayerCount()>10&&new_team->getGoalkeeperCount()>0) {
+            current_active_teams.add(new_team, compare_teams_by_id, new_team->getglobal_left_closest_team().lock(),new_team->getglobal_right_closest_team().lock());
+       new_team->getglobal_right_closest_team().lock()->setglobal_left_closest_team(new_team);
+       new_team->getglobal_left_closest_team().lock()->setglobal_right_closest_team(new_team);
+        }
+        if(n1->getData()->getPlayerCount()>10&&n1->getData()->getGoalkeeperCount()>0)
+            current_active_teams.remove(n1->getData(), &compare_teams_by_id);
+
+
+
+
+
+
+
+
+
+    }
+    catch (std::bad_alloc){
+        return StatusType::ALLOCATION_ERROR;
 	return StatusType::SUCCESS;
-}
+}}
 
 output_t<int> world_cup_t::get_top_scorer(int teamId) {
     if (teamId == 0)
@@ -321,7 +433,7 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
             if (n1 == nullptr || n1->getData()->getPlayerCount() == 0)
                 return StatusType::FAILURE;
             shared_ptr<Player> *player_arr = new shared_ptr<Player>[n1->getData()->getPlayerCount()];
-            n1->getData()->treeToArrayInOrder_for_team(player_arr, n1->getData()->getPlayerCount());
+            n1->getData()->treeToArrayInOrder_for_team_byscore(player_arr, n1->getData()->getPlayerCount());
             for (int i = 0; i < n1->getData()->getPlayerCount(); i++)
                 output[i] = player_arr[i]->get_player_ID();
         }

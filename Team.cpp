@@ -39,16 +39,23 @@ Node<std::shared_ptr<Player>>* Team::find_player_by_ID(std::shared_ptr<Player> p
 Node<std::shared_ptr<Player>>* Team::find_player_by_score(std::shared_ptr<Player> player1){
     return players_in_team_by_score.find(player1,&compare_players_by_Score);
 }
-const std::shared_ptr<Player> Team::find_max_by_ID() {
-    return players_in_team_by_id.findMax();
-}
+
+
 const std::shared_ptr<Player> Team::find_max_by_Score() {
     return players_in_team_by_score.findMax();
 }
-void Team::treeToArrayInOrder_for_team(std::shared_ptr<Player> * array,int size ){
-    return players_in_team_by_score.treeToArrayInOrder(array,size);
+void Team::treeToArrayInOrder_for_team_byscore(std::shared_ptr<Player> * array,int size ){
+     players_in_team_by_score.treeToArrayInOrder(array,size);
 }
 
-
+void Team::treeToArrayInOrder_for_team_byId(std::shared_ptr<Player> * array,int size ){
+     players_in_team_by_id.treeToArrayInOrder(array,size);
+}
+bool Team::create_tree_from_array_by_Id(std::shared_ptr<Player> * array,int size ){
+    return players_in_team_by_id.createTreeFromSortedArray(array,size);
+}
+bool Team::create_tree_from_array_by_Score(std::shared_ptr<Player> * array,int size ){
+    return players_in_team_by_score.createTreeFromSortedArray(array,size);
+}
 
 

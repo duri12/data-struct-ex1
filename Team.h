@@ -47,7 +47,11 @@ bool remove_player_from_team_by_Score(std::shared_ptr<Player> player1);
 Node<std::shared_ptr<Player>>* find_player_by_score(std::shared_ptr<Player> player1);
 Node<std::shared_ptr<Player>>* find_player_by_ID(std::shared_ptr<Player> player1);
 const std::shared_ptr<Player> find_max_by_Score();
-void treeToArrayInOrder_for_team(std::shared_ptr<Player> * array,int size );
+void treeToArrayInOrder_for_team_byscore(std::shared_ptr<Player> * array,int size );
+void treeToArrayInOrder_for_team_byId(std::shared_ptr<Player> * array,int size );
+bool create_tree_from_array_by_Id(std::shared_ptr<Player> * array,int size );
+bool create_tree_from_array_by_Score(std::shared_ptr<Player> * array,int size );
+
 
 };
 int compare_teams_by_id(std::shared_ptr<Team> team1, std::shared_ptr<Team>team2);
