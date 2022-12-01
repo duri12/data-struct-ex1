@@ -514,6 +514,14 @@ output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
 
 output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId)
 {
+    std::shared_ptr<Team> minteam(new Team(minTeamId,0));
+    std::shared_ptr<Team> maxteam(new Team(maxTeamId,0));
+    std::shared_ptr<Team> first_team(new Team(0,0));
+
+    if(minTeamId<0||maxTeamId<0||minTeamId>maxTeamId)
+        return output_t<int>(StatusType::INVALID_INPUT);
+   first_team= *current_active_teams.findMinBiggerThanX(minteam, &compare_teams_by_id);
+
 
 }
 
