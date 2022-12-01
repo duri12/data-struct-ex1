@@ -58,10 +58,21 @@ int main(){
     tree->remove(20,compare);
     tree->print();
 
-    int array1[12] = { 12,13,14,15,16,17,18,19,20,21 ,22,23};
+    int array1[12] = { 12,13,14,15,16,17,18,19,20,31 ,32,33};
     bool a = tree->createTreeFromSortedArray(array1,12);
     tree->print();
-    a= !a ;
+    int *max = tree->findMaxLowerThanX(25 , compare);
+    cout <<max[0] <<endl;
+    int *min = tree->findMinBiggerThanX(25, compare);
+    cout <<min[0] <<endl;
+    tree->print();
+    int max2 = tree->findMax();
+    cout <<max2 <<endl;
+    int min2 = tree->findMin();
+    cout <<min2 <<endl;
+    tree->remove(17,compare);
+    tree->print();
+    cout << a <<endl;
     delete tree;
 
     return 0;

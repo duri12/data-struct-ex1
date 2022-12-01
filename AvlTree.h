@@ -45,7 +45,7 @@ class Node{
 
 template<typename T>
 class  AvlTree{
-
+    //TODO: the pointer add thing . GL
 
     private:
     Node<T>* _root;
@@ -62,9 +62,10 @@ class  AvlTree{
     void update(Node<T>* node); // updates the height of the node and the BFactor
     int size(Node<T> *node) const;
     void printSubtree(Node<T>* root ,const string& prefix);
-    const T& findMax(Node<T>* node); // to check
-    const T& findMin(Node<T>* node);// to check
-
+    const T& findMax(Node<T>* node);
+    const T& findMin(Node<T>* node);
+    T* findMaxLowerThanX(Node<T>* node,const T&  max, int (*compare)(T, T));
+    T* findMinBiggerThanX(Node<T>* node,const T&  max, int (*compare)(T, T));
 
     Node<T>* LLR(Node<T>* node); //Left-left rotation of the tree
     Node<T>* LRR(Node<T>* node); //Left-right rotation of
@@ -77,8 +78,11 @@ class  AvlTree{
 
     AvlTree();
     ~AvlTree();
-    const T& findMax();// to check
-    const T& findMin();// to check
+    const T& findMax();
+    const T& findMin();
+    T* findMaxLowerThanX(const T&  max, int (*compare)(T, T));
+    T* findMinBiggerThanX(const T&  min, int (*compare)(T, T));
+
     Node<T>* getRoot();
     int height(Node<T>* node);
     int BalanceFactor(Node<T>* node);
@@ -88,7 +92,7 @@ class  AvlTree{
     void print();//prints the tree
     bool add(const T& value, int (*compare)(T,T));
     bool remove(const T& value, int (*compare)(T,T));
-    bool createTreeFromSortedArray(T array[] ,int size); // to check
+    bool createTreeFromSortedArray(T array[] ,int size);
 
     Node<T>* find(const T& value, int (*compare)(T,T)); // calls private find with the root
     bool add(const T& value, int (*compare)(T,T),weak_ptr<T> left ,  weak_ptr<T> right);
@@ -548,6 +552,55 @@ Node<T>* AvlTree<T>::createTreeFromSortedArray(T *array, int start, int end) {
         throw std::bad_alloc();
     }
     return root;
+}
+
+template<typename T>
+T* AvlTree<T>::findMaxLowerThanX(const T& max, int (*compare)(T,T)) {
+    if (compare == nullptr){
+        return nullptr;
+    }
+    return findMaxLowerThanX(this->_root, max,compare);
+}
+
+template<typename T>
+T* AvlTree<T>::findMaxLowerThanX(Node<T>* node,const T&  max, int (*compare)(T, T)) {
+    if (node == nullptr){
+        return nullptr;
+    }
+    if(compare(node->getData() ,max) == 0){
+        return &node->getData();
+    }
+    if(compare(node->getData() ,max) == 1){
+        T* value = findMaxLowerThanX(node->getRight() , max ,compare);
+        if(value == nullptr){
+            return &node->getData();
+        }
+        return value;
+    }
+    return findMaxLowerThanX(node->getLeft() , max ,compare);
+}
+
+template<typename T>
+T* AvlTree<T>::findMinBiggerThanX(Node<T> *node, const T &max, int (*compare)(T, T)) {
+    if (compare == nullptr || node == nullptr){
+        return nullptr;
+    }
+    if(compare(node->getData() ,max) == 0){
+        return &node->getData();
+    }
+    if(compare(node->getData() ,max) == -1){
+        T* value = findMinBiggerThanX(node->getLeft() , max ,compare);
+        if(value == nullptr){
+            return &node->getData();
+        }
+        return value;
+    }
+    return findMinBiggerThanX(node->getRight() , max ,compare);
+}
+
+template<typename T>
+T* AvlTree<T>::findMinBiggerThanX(const T &min, int (*compare)(T, T)) {
+    return findMinBiggerThanX(this->_root , min,compare);
 }
 
 template<typename T>
