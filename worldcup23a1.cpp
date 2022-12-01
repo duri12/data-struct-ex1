@@ -368,11 +368,11 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
         if(new_team->getPlayerCount()>10&&new_team->getGoalkeeperCount()>0) {
             shared_ptr<Team> left(new Team(0,0));
             shared_ptr<Team> right(new Team(0,0));
-            current_active_teams.add(new_team, compare_teams_by_id, left,right);
+            current_active_teams.add(new_team, &compare_teams_by_id, left,right);
             if(left->getteamID() !=0){
-              n1->getData()->setglobal_left_closest_team(left);
+              new_team->setglobal_left_closest_team(left);
             if(right->getteamID() !=0){
-                n2->getData()->setglobal_right_closest_team(right);
+              new_team->setglobal_right_closest_team(right);
             }
             }
             new_team->getglobal_right_closest_team().lock()->setglobal_left_closest_team(new_team);
@@ -525,11 +525,16 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId)
     std::shared_ptr<Team> minteam(new Team(minTeamId,0));
     std::shared_ptr<Team> maxteam(new Team(maxTeamId,0));
     std::shared_ptr<Team> first_team(new Team(0,0));
+    std::shared_ptr<Team> last_team(new Team(0,0));
+    std::shared_ptr<Team> current_team(new Team(0,0));
+
+
 
     if(minTeamId<0||maxTeamId<0||minTeamId>maxTeamId)
         return output_t<int>(StatusType::INVALID_INPUT);
    first_team= *current_active_teams.findMinBiggerThanX(minteam, &compare_teams_by_id);
-
-
+   last_team= *current_active_teams.findMaxLowerThanX(maxteam, &compare_teams_by_id);
+    int r=0;
+   while(current_team!=last_team)
 }
 
