@@ -55,6 +55,9 @@ bool create_tree_from_array_by_Score(std::shared_ptr<Player> * array,int size );
 
 };
 int compare_teams_by_id(std::shared_ptr<Team> team1, std::shared_ptr<Team>team2);
-
+struct game_teams{
+    int game_points;
+    int id;
+};
 
 #endif //DATA_STRUCT_EX1_TEAM_H

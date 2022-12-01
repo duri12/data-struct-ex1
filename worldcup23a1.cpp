@@ -520,21 +520,48 @@ output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
     }
 }
 
-output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId)
-{
-    std::shared_ptr<Team> minteam(new Team(minTeamId,0));
-    std::shared_ptr<Team> maxteam(new Team(maxTeamId,0));
-    std::shared_ptr<Team> first_team(new Team(0,0));
-    std::shared_ptr<Team> last_team(new Team(0,0));
-    std::shared_ptr<Team> current_team(new Team(0,0));
+output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) {
+    std::shared_ptr<Team> minteam(new Team(minTeamId, 0));
+    std::shared_ptr<Team> maxteam(new Team(maxTeamId, 0));
+    std::shared_ptr<Team> first_team(new Team(0, 0));
+    std::shared_ptr<Team> last_team(new Team(0, 0));
+    std::shared_ptr<Team> current_team(new Team(0, 0));
 
 
-
-    if(minTeamId<0||maxTeamId<0||minTeamId>maxTeamId)
+    if (minTeamId < 0 || maxTeamId < 0 || minTeamId > maxTeamId)
         return output_t<int>(StatusType::INVALID_INPUT);
-   first_team= *current_active_teams.findMinBiggerThanX(minteam, &compare_teams_by_id);
-   last_team= *current_active_teams.findMaxLowerThanX(maxteam, &compare_teams_by_id);
-    int r=0;
-   while(current_team!=last_team)
-}
+    first_team = *current_active_teams.findMinBiggerThanX(minteam, &compare_teams_by_id);
+    last_team = *current_active_teams.findMaxLowerThanX(maxteam, &compare_teams_by_id);
+    current_team = first_team;
+    int r = 0;
+    while (current_team != last_team && current_team != nullptr) {
+        current_team = current_team->getglobal_right_closest_team().lock();
+        r++;
+    }
+    current_team = first_team;
+    game_teams *playing_teams = new game_teams[r];
+    for (int i = 0; i < r; i++) {
+        playing_teams[i].game_points = current_team->getTeamPoints() + current_team->getsum_of_player_score();
+        playing_teams[i].id = current_team->getteamID();
+        current_team = current_team->getglobal_right_closest_team().lock();
+    }
+    if (r % 2 == 0) {
+        int j = 0, i = 0;
+        while (i < r) {
+            if(playing_teams[i].game_points>playing_teams[i+1].game_points)
+                playing_teams[j]=playing_teams[i];
+            else if(playing_teams[i].game_points<playing_teams[i+1].game_points)
+                playing_teams[j]=playing_teams[i+1];
+            else
+                if(playing_teams[i].id>playing_teams[i+1].id)
+                    playing_teams[j]=playing_teams[i];
+                else
+                    playing_teams[j]=playing_teams[i+1];
 
+                i=i+2;
+                j++;
+
+        }
+
+    }
+}
