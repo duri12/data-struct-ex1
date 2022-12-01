@@ -36,6 +36,9 @@ StatusType world_cup_t::remove_team(int teamId)
         return StatusType::INVALID_INPUT;
     try{
         std::shared_ptr<Team> t1 (new Team(teamId, 0));
+        Node<shared_ptr<Team>> *n1 = teams_tree.find(t1, &compare_teams_by_id);
+        if(n1==nullptr||n1->getData()->getPlayerCount()>0)
+            return StatusType::FAILURE;
         if(teams_tree.remove(t1,&compare_teams_by_id)== false)
             return StatusType::FAILURE;
 
@@ -367,8 +370,23 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
        new_team->getglobal_right_closest_team().lock()->setglobal_left_closest_team(new_team);
        new_team->getglobal_left_closest_team().lock()->setglobal_right_closest_team(new_team);
         }
-        if(n1->getData()->getPlayerCount()>10&&n1->getData()->getGoalkeeperCount()>0)
+        if(n1->getData()->getPlayerCount()>10&&n1->getData()->getGoalkeeperCount()>0) {
             current_active_teams.remove(n1->getData(), &compare_teams_by_id);
+            n1->getData()->getglobal_right_closest_team().lock()->setglobal_left_closest_team(n1->getData()->getglobal_left_closest_team());
+            n1->getData()->getglobal_left_closest_team().lock()->setglobal_right_closest_team(n1->getData()->getglobal_right_closest_team());
+        }
+        if(n2->getData()->getPlayerCount()>10&&n2->getData()->getGoalkeeperCount()>0) {
+            current_active_teams.remove(n1->getData(), &compare_teams_by_id);
+            n2->getData()->getglobal_right_closest_team().lock()->setglobal_left_closest_team(n2->getData()->getglobal_left_closest_team());
+            n2->getData()->getglobal_left_closest_team().lock()->setglobal_right_closest_team(n2->getData()->getglobal_right_closest_team());
+        }
+        n1->getData()->setPlayerCount(0);
+        n2->getData()->setPlayerCount(0);
+        teams_tree.remove(n1->getData(),&compare_teams_by_id);
+        teams_tree.remove(n2->getData(),&compare_teams_by_id);
+
+
+
 
 
 
@@ -488,20 +506,14 @@ output_t<int> world_cup_t::get_closest_player(int playerId, int teamId)
             return output_t<int>(n2->getData()->get_global_left_closest().lock()->get_player_ID());
         return output_t<int>(n2->getData()->get_global_right_closest().lock()->get_player_ID());
 
-
-
-
-
     }
     catch(std::bad_alloc){
         return output_t<int>(StatusType::ALLOCATION_ERROR);
     }
-	return 1006;
 }
 
 output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId)
 {
-	// TODO: Your code goes here
-	return 2;
+
 }
 

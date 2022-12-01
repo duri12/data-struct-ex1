@@ -516,14 +516,16 @@ int AvlTree<T>::treeToArrayInOrder(Node<T> *node,T array[]  , int i){
 
 template<typename T>
 bool AvlTree<T>::createTreeFromSortedArray(T *array, int size1) {
+    Node<T> *temp = nullptr;
     try{
-        Node<T> *temp  = createTreeFromSortedArray(array,0,size1-1);
+        temp  = createTreeFromSortedArray(array,0,size1-1);
         // size start at 1  , array start at 0
         delete this->_root;
         this->_root = temp;
 
     }
     catch (const std::bad_alloc&) {
+        delete temp;
         throw;
     }
     return true;
