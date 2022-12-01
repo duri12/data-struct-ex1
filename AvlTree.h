@@ -53,7 +53,7 @@ class  AvlTree{
     int treeToArrayInOrder(Node<T> *node,T array[]  , int i); // when called should set  i=0;
     Node<T>* find(Node<T>* current_node,const T& value ,int (*compare)(T,T));
     Node<T>* insert(const T& value,Node<T>* current_node, int (*compare)(T,T)); // the recursive private function that inserts the node
-    Node<T>* insert(const T& value ,Node<T>* current_node ,int (*compare)(T,T),weak_ptr<T> left ,  weak_ptr<T> right);
+    Node<T>* insert(const T& value ,Node<T>* current_node ,int (*compare)(T,T),T& left ,  T& right);
     Node<T>* remove(Node<T>* current_node,const T& value, int (*compare)(T,T)); // the recursive private function
     Node<T>* createTreeFromSortedArray(T *array, int start, int end);
     Node<T>* balance(Node<T>* current_node); // handles the rotation of the tree
@@ -95,7 +95,7 @@ class  AvlTree{
     bool createTreeFromSortedArray(T array[] ,int size);
 
     Node<T>* find(const T& value, int (*compare)(T,T)); // calls private find with the root
-    bool add(const T& value, int (*compare)(T,T),weak_ptr<T> left ,  weak_ptr<T> right);
+    bool add(const T& value, int (*compare)(T,T),T&left ,  T&right);
 };
 
 
@@ -177,7 +177,7 @@ bool AvlTree<T>::add(const T &value,int (*compare)(T,T)) {
 
 }
 template<typename T>
-bool AvlTree<T>::add(const T &value, int (*compare)(T, T),weak_ptr<T> left ,  weak_ptr<T> right) {
+bool AvlTree<T>::add(const T &value, int (*compare)(T, T),T &left ,  T &right) {
     if(compare==nullptr){
         return false;
     }
@@ -189,21 +189,15 @@ bool AvlTree<T>::add(const T &value, int (*compare)(T, T),weak_ptr<T> left ,  we
         catch(std::bad_alloc&){
             throw;
         }
-        left.reset();
-        right.reset();
         return true;
     }
     Node<T>* temp = this->find(value ,compare);
     if(temp != nullptr){
         return false; // already added
     }
+    left = value; // the default value of the left and right
+    right = value;
     this->_root = insert(value, this->_root , compare,left,right);
-    if(left.expired()){
-        left.swap(this->_root->getData());
-    }
-    if(right == nullptr) {
-        right.swap(this->_root->getData());
-    }
     return true;
 }
 
@@ -461,7 +455,7 @@ const T &AvlTree<T>::findMin() {
 
 template<typename T>
 Node<T> *
-AvlTree<T>::insert(const T &value, Node<T> *current_node, int (*compare)(T, T),weak_ptr<T> left ,  weak_ptr<T> right) {
+AvlTree<T>::insert(const T &value, Node<T> *current_node, int (*compare)(T, T),T& left ,  T& right) {
     if(compare == nullptr){
         return  nullptr;
     }
@@ -477,11 +471,11 @@ AvlTree<T>::insert(const T &value, Node<T> *current_node, int (*compare)(T, T),w
         return new_node;
     }
     if(compare(current_node->getData() , value)==-1){//current_node->getData() > value
-        left.swap(current_node->getData());
+        right =current_node->getData();
         current_node->setLeft(insert(value, current_node->getLeft() ,compare,left,right));
     }
     else{
-        right.swap(current_node->getData());
+        left = current_node->getData();
         current_node->setRight(insert(value, current_node->getRight(),compare,left,right));
     }
     update(current_node);
