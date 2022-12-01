@@ -366,8 +366,16 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
             return StatusType::FAILURE;
 
         if(new_team->getPlayerCount()>10&&new_team->getGoalkeeperCount()>0) {
-            current_active_teams.add(new_team, compare_teams_by_id, new_team->getglobal_left_closest_team().lock(),new_team->getglobal_right_closest_team().lock());
-       new_team->getglobal_right_closest_team().lock()->setglobal_left_closest_team(new_team);
+            shared_ptr<Team> left(new Team(0,0));
+            shared_ptr<Team> right(new Team(0,0));
+            current_active_teams.add(new_team, compare_teams_by_id, left,right);
+            if(left->getteamID() !=0){
+              n1->getData()->setglobal_left_closest_team(left);
+            if(right->getteamID() !=0){
+                n2->getData()->setglobal_right_closest_team(right);
+            }
+            }
+            new_team->getglobal_right_closest_team().lock()->setglobal_left_closest_team(new_team);
        new_team->getglobal_left_closest_team().lock()->setglobal_right_closest_team(new_team);
         }
         if(n1->getData()->getPlayerCount()>10&&n1->getData()->getGoalkeeperCount()>0) {
