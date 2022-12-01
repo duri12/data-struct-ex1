@@ -11,9 +11,9 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b25251c2-8304-4570-b001-a3ceee48e805" name="Changes" comment="functions">
+    <list default="true" id="b25251c2-8304-4570-b001-a3ceee48e805" name="Changes" comment="end!!!!!!!!(without dbug)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/worldcup23a1.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/worldcup23a1.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -91,7 +91,8 @@
       <workItem from="1669554741389" duration="20011000" />
       <workItem from="1669639200206" duration="18023000" />
       <workItem from="1669719540322" duration="31580000" />
-      <workItem from="1669885747983" duration="7240000" />
+      <workItem from="1669885747983" duration="7374000" />
+      <workItem from="1669896732306" duration="1000" />
     </task>
     <task id="LOCAL-00001" summary="nothing">
       <created>1669281567780</created>
@@ -212,7 +213,14 @@
       <option name="project" value="LOCAL" />
       <updated>1669891780002</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="end!!!!!!!!(without dbug)">
+      <created>1669896619692</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1669896619692</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -235,6 +243,7 @@
     <MESSAGE value="start of worldcup and player and team" />
     <MESSAGE value="add remove and uptade" />
     <MESSAGE value="functions" />
-    <option name="LAST_COMMIT_MESSAGE" value="functions" />
+    <MESSAGE value="end!!!!!!!!(without dbug)" />
+    <option name="LAST_COMMIT_MESSAGE" value="end!!!!!!!!(without dbug)" />
   </component>
 </project>
