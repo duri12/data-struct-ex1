@@ -13,30 +13,31 @@ int compare(int a , int b){
 
 int main(){
     auto* tree = new AvlTree<int>;
-    shared_ptr<int> temp = std::make_shared<int>(0);
-    weak_ptr<int> rightptr = temp;
-    weak_ptr<int> leftptr = temp;
+    int c =-1 ,b =-1;
     tree->add(1,compare);
     tree->add(2,compare);
     tree->add(3,compare);
     tree->add(4,compare);
-    tree->add(5,compare);
-    tree->add(6,compare);
+    //tree->add(5,compare);
+    //tree->add(6,compare);
     tree->print();
-    //tree->add(5,compare,leftptr,rightptr);
-    printf("left: %d, right: %d\n",*leftptr.lock(),*rightptr.lock());    tree->print();
+    tree->add(5,compare,c,b);
+    printf("left: %d, right: %d\n",c, b);
+    tree->print();
 
     tree->add(5,compare);
-    //tree->add(6,compare,leftptr ,rightptr);
-    printf("left: %d, right: %d\n",*leftptr.lock(),*rightptr.lock());    tree->add(10,compare);
+    tree->add(6,compare,c ,b);
+    printf("left: %d, right: %d\n",c, b);
+
+    tree->add(10,compare);
     tree->add(11,compare);
     tree->add(12,compare);
     tree->add(13,compare);
     tree->add(7,compare);
     tree->print();
 
-    //tree->add(8,compare,leftptr ,rightptr);
-    printf("left: %d, right: %d\n",*leftptr.lock(),*rightptr.lock());
+    tree->add(8,compare,c ,b);
+    printf("inserted:%d left: %d, right: %d\n",8,c, b);
     tree->print();
     int array[10]= {};
     tree->treeToArrayInOrder(array,10);
@@ -73,6 +74,7 @@ int main(){
     tree->remove(17,compare);
     tree->print();
     cout << a <<endl;
+
     delete tree;
 
     return 0;
