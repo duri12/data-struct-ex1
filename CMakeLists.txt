@@ -13,7 +13,7 @@ add_executable(data_struct_ex1
         worldcup23a1.cpp
         worldcup23a1.h
         Team.h
-        Player.h ActiveTeam.h
+        Player.h
         AvlTree.h
 TreeTestMain.cpp
         )

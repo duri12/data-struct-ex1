@@ -87,16 +87,19 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         }
         player1->get_global_right_closest().lock()->set_global_left_closest(player1);
         player1->get_global_left_closest().lock()->set_global_right_closest(player1);
-        player1->set_games_played(
-                gamesPlayed - player1->get_team_pointer().lock()->getAdditionalGamesPlayed());//set games played
-        player1->get_team_pointer().lock()->setsum_of_player_score(
-                (player1->get_team_pointer().lock()->getsum_of_player_score()) +
-                (player1->get_goals_scored() - player1->get_cards()));//set sum of players score for team
-            if(compare_players_by_Score(player1->get_team_pointer().lock()->getTeamTopScorer(),player1)==1){
+        player1->set_games_played(gamesPlayed - player1->get_team_pointer().lock()->getAdditionalGamesPlayed());//set games playedplayer1->get_team_pointer().lock()->setsum_of_player_score((player1->get_team_pointer().lock()->getsum_of_player_score()) +(player1->get_goals_scored() - player1->get_cards()));//set sum of players score for team
+         if(player1->get_team_pointer().lock()->getTeamTopScorer()== nullptr)
+             player1->get_team_pointer().lock()->setTeamTopScorer(player1);
+         else{
+             if(compare_players_by_Score(player1->get_team_pointer().lock()->getTeamTopScorer(),player1)==1){
                 player1->get_team_pointer().lock()->setTeamTopScorer(player1);
-        if (compare_players_by_Score(top_scorer,player1)==1)// check if it new top scorer
-                top_scorer = player1;
-        }
+            if(top_scorer==nullptr)
+                top_scorer=player1;
+            else {
+                if (compare_players_by_Score(top_scorer, player1) == 1)// check if it new top scorer
+                    top_scorer = player1;
+            }
+        }}
         total_players_counter++;//add 1 to total_players_counter
         player1->get_team_pointer().lock()->setPlayerCount(
                 player1->get_team_pointer().lock()->getPlayerCount() + 1);//add 1 to team_players_count;

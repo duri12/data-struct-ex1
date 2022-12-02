@@ -1,6 +1,13 @@
 #include "Player.h"
-Player::Player(int player_ID, int goals_scored, int cards, int games_played, int team_id, bool is_goalkeeper) :player_ID(player_ID),goals_scored(goals_scored),cards(cards),games_played(games_played),team_ID(team_id),is_goalkeeper(is_goalkeeper),global_left_closest(),global_right_closest(),team_pointer()
-{}
+Player::Player(int player_ID, int goals_scored, int cards, int games_played, int team_id, bool is_goalkeeper) :player_ID(player_ID),goals_scored(goals_scored),cards(cards),games_played(games_played),team_ID(team_id),is_goalkeeper(is_goalkeeper)
+{
+    std::shared_ptr<Team> t(nullptr);
+    std::shared_ptr<Player> p(nullptr);
+    team_pointer=t;
+    global_right_closest=p;
+    global_left_closest=p;
+
+}
 Player::~Player() =default;
 int compare_players_by_ID(std::shared_ptr<Player> player1, std::shared_ptr<Player> player2)
 {

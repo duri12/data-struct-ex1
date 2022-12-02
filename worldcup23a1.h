@@ -18,7 +18,6 @@
 #include "wet1util.h"
 #include "Team.h"
 #include "Player.h"
-#include "ActiveTeam.h"
 #include "AvlTree.h"
 #include "memory"
 
