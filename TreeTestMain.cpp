@@ -1,5 +1,6 @@
 #include "AvlTree.h"
 #include <string>
+#include <memory>
 
 using namespace std;
 
@@ -11,7 +12,15 @@ int compare(int a , int b){
     return 0;
 }
 
+int compare2(shared_ptr<int> a , shared_ptr<int> b){
+    if(a.get()>b.get())
+        return -1;
+    if(a.get()<b.get())
+        return 1;
+    return 0;
+}
 int main(){
+    /*
     auto* tree = new AvlTree<int>;
     int c =-1 ,b =-1;
     tree->add(1,compare);
@@ -76,6 +85,7 @@ int main(){
     cout << a <<endl;
 
     delete tree;
+    */
 
     return 0;
 }
