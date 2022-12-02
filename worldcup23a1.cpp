@@ -86,9 +86,9 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
             player1->set_global_right_closest(right);
         }
         if(player1->get_global_right_closest().lock()!= nullptr)
-        player1->get_global_right_closest().lock()->set_global_left_closest(player1);
+            player1->get_global_right_closest().lock()->set_global_left_closest(player1);
         if(player1->get_global_left_closest().lock()!= nullptr)
-        player1->get_global_left_closest().lock()->set_global_right_closest(player1);
+            player1->get_global_left_closest().lock()->set_global_right_closest(player1);
 
         player1->set_games_played(gamesPlayed - player1->get_team_pointer().lock()->getAdditionalGamesPlayed());//set games playedplayer1->get_team_pointer().lock()->setsum_of_player_score((player1->get_team_pointer().lock()->getsum_of_player_score()) +(player1->get_goals_scored() - player1->get_cards()));//set sum of players score for team
 
@@ -483,7 +483,7 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
             for (int i = 0; i < n1->getData()->getPlayerCount(); i++)
                 output[i] = player_arr[i]->get_player_ID();
         }
-            if(teamId<0)
+            if(teamId>0)
         {
             if(total_players_counter==0)
                 return StatusType::FAILURE;

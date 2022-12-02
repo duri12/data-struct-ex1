@@ -7,6 +7,8 @@ using namespace std;
 class Team;
 class Player {
 private:
+
+
     int player_ID; // the player's ID
     int goals_scored; // the number of goals the player has scored
     int cards; // the number of cards the player has collected
@@ -16,7 +18,11 @@ private:
     std::weak_ptr<Team> team_pointer; // the team the player belongs to
     std::weak_ptr<Player> global_left_closest; // the player that is closest to this player from the left
     std::weak_ptr<Player> global_right_closest; // the player that is closest to this player from the right
+
+
 public:
+
+
     Player(int player_ID,int goals_scored,int cards,int games_played, int team_id,bool is_goalkeeper);
     ~Player();
     int get_player_ID() const { return player_ID; }
@@ -25,9 +31,13 @@ public:
     int get_games_played() const { return games_played; }
     bool get_is_goalkeeper() const { return is_goalkeeper; }
     int get_team_ID() const { return team_ID; }
+
+
     std::weak_ptr<Team> get_team_pointer() const { return team_pointer;}
     std::weak_ptr<Player> get_global_left_closest() const { return global_left_closest;}
     std::weak_ptr<Player> get_global_right_closest() const { return global_right_closest;}
+
+
     void set_global_left_closest(std::weak_ptr<Player> new_global_left_closest){ this->global_left_closest = new_global_left_closest;}
     void set_global_right_closest(std::weak_ptr<Player> new_global_right_closest){ this->global_right_closest = new_global_right_closest;}
     void set_team_pointer(std::weak_ptr<Team> new_team_pointer){ this->team_pointer = new_team_pointer;}
@@ -37,6 +47,8 @@ public:
     void set_goals_scored(int new_goals_scored) { this->goals_scored=new_goals_scored;}
     void set_cards(int new_cards) { this->cards=new_cards;}
     void set_games_played(int new_games_played) { this->games_played=new_games_played;}
+
+
     friend ostream& operator<<(ostream& os, const Player& player);
 
 
