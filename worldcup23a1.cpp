@@ -223,7 +223,7 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
         }
         n1->getData()->get_global_left_closest().lock()->set_global_right_closest(n1->getData());
         n1->getData()->get_global_right_closest().lock()->set_global_left_closest(n1->getData());
-        if (n1->getData()->get_team_pointer().lock()->add_player_to_team_by_score(n1->getData()))
+        if (!n1->getData()->get_team_pointer().lock()->add_player_to_team_by_score(n1->getData()))
             return StatusType::FAILURE;
         if(compare_players_by_Score(n1->getData()->get_team_pointer().lock()->getTeamTopScorer(),n1->getData())==1){
                 n1->getData()->get_team_pointer().lock()->setTeamTopScorer(n1->getData());
