@@ -122,8 +122,10 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
             if(right1->getteamID() !=player1->get_team_pointer().lock()->getteamID()){
                 player1->get_team_pointer().lock()->setglobal_right_closest_team(right1);
             }
+            if(player1->get_team_pointer().lock()->getglobal_left_closest_team().lock()!=nullptr)
             player1->get_team_pointer().lock()->getglobal_left_closest_team().lock()->setglobal_right_closest_team(player1->get_team_pointer().lock());
-            player1->get_team_pointer().lock()->getglobal_right_closest_team().lock()->setglobal_left_closest_team(player1->get_team_pointer().lock());
+            if(player1->get_team_pointer().lock()->getglobal_right_closest_team().lock()!=nullptr)
+                player1->get_team_pointer().lock()->getglobal_right_closest_team().lock()->setglobal_left_closest_team(player1->get_team_pointer().lock());
 
         }
     }
