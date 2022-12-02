@@ -46,7 +46,9 @@ Node<std::shared_ptr<Player>>* Team::find_player_by_score(std::shared_ptr<Player
 
 
 const std::shared_ptr<Player> Team::find_max_by_Score() {
+    if(players_in_team_by_score.getRoot()!=NULL)
     return players_in_team_by_score.findMax();
+    return nullptr;
 }
 void Team::treeToArrayInOrder_for_team_byscore(std::shared_ptr<Player> * array,int size ){
      players_in_team_by_score.treeToArrayInOrder(array,size);
