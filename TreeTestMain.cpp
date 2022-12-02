@@ -20,7 +20,7 @@ int compare2(shared_ptr<int> a , shared_ptr<int> b){
     return 0;
 }
 int main(){
-    /*
+
     auto* tree = new AvlTree<int>;
     int c =-1 ,b =-1;
     tree->add(1,compare);
@@ -85,7 +85,15 @@ int main(){
     cout << a <<endl;
 
     delete tree;
-    */
-
+    tree = new AvlTree<int>;
+    for (int i = 0 ; i < 100;i++){
+        tree->add(i,compare);
+    }
+    tree->print();
+    for (int i = 99 ; i > 0;i--){
+        tree->remove(i,compare);
+    }
+    tree->print();
+    delete tree;
     return 0;
 }
