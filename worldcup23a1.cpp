@@ -155,7 +155,7 @@ StatusType world_cup_t::remove_player(int playerId)
       //check if top scorer for team or all players
         if (n1->getData()->get_team_pointer().lock()->getTeamTopScorer() == n1->getData()) {
             n1->getData()->get_team_pointer().lock()->setTeamTopScorer(n1->getData()->get_team_pointer().lock()->find_max_by_Score());
-            if (top_scorer = n1->getData())
+            if (top_scorer == n1->getData())
                 top_scorer = players_tree_by_score.findMax();
         }
         //remove player from last tree and set nre team values
