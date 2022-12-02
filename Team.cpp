@@ -64,5 +64,13 @@ bool Team::create_tree_from_array_by_Score(std::shared_ptr<Player> * array,int s
     return players_in_team_by_score.createTreeFromSortedArray(array,size);
 }
 
+ostream& operator<<(ostream& os, const Team& team)
+{
+    os<< "printing team :" <<team.teamID<<endl;
+    os << "the team score:"<<team.sum_of_player_score<<endl;
+    os << "the number of players"<<team.player_count<<endl;
+    os << "the number of goalKeepers the team have" <<team.goalkeeper_count<<endl;
+    return os;
+}
 
 

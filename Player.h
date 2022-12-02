@@ -37,15 +37,12 @@ public:
     void set_goals_scored(int new_goals_scored) { this->goals_scored=new_goals_scored;}
     void set_cards(int new_cards) { this->cards=new_cards;}
     void set_games_played(int new_games_played) { this->games_played=new_games_played;}
-
-
-
-
-
+    friend ostream& operator<<(ostream& os, const Player& player);
 
 
 
 };
+
 int compare_players_by_ID(std::shared_ptr<Player> player1, std::shared_ptr<Player> player2);
 int compare_players_by_Score(std::shared_ptr<Player> player1, std::shared_ptr<Player> player2);
 

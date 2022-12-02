@@ -37,6 +37,15 @@ int compare_players_by_Score(std::shared_ptr<Player> player1, std::shared_ptr<Pl
 
 
 
-
+ostream& operator<<(ostream& os, const Player& player)
+{
+    os <<"printing player:"<<player.player_ID<<endl;
+    os<< "teamId: "<<player.team_ID<<endl;
+    os<< "goalsScored: "<<player.goals_scored<<endl;
+    os<< "cards: "<<player.cards<<endl;
+    os<< "gamesPlayed: "<<player.games_played<<endl;
+    os<< "isGoalkeeper: "<<player.is_goalkeeper<<endl;
+    return os;
+}
 
 
