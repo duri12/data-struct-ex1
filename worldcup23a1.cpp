@@ -483,7 +483,7 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
             for (int i = 0; i < n1->getData()->getPlayerCount(); i++)
                 output[i] = player_arr[i]->get_player_ID();
         }
-            if(teamId>0)
+            if(teamId<0)
         {
             if(total_players_counter==0)
                 return StatusType::FAILURE;
