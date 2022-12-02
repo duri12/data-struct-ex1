@@ -15,5 +15,5 @@ add_executable(data_struct_ex1
         Team.h
         Player.h
         AvlTree.h
-TreeTestMain.cpp
+#TreeTestMain.cpp
         )
