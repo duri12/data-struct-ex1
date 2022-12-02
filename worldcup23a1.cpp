@@ -85,7 +85,9 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
         if(right->get_player_ID() !=player1->get_player_ID()){
             player1->set_global_right_closest(right);
         }
+        if(player1->get_global_right_closest().lock()!= nullptr)
         player1->get_global_right_closest().lock()->set_global_left_closest(player1);
+        if(player1->get_global_left_closest().lock()!= nullptr)
         player1->get_global_left_closest().lock()->set_global_right_closest(player1);
         player1->set_games_played(gamesPlayed - player1->get_team_pointer().lock()->getAdditionalGamesPlayed());//set games playedplayer1->get_team_pointer().lock()->setsum_of_player_score((player1->get_team_pointer().lock()->getsum_of_player_score()) +(player1->get_goals_scored() - player1->get_cards()));//set sum of players score for team
          if(player1->get_team_pointer().lock()->getTeamTopScorer()== nullptr)
@@ -105,9 +107,9 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
                 player1->get_team_pointer().lock()->getPlayerCount() + 1);//add 1 to team_players_count;
         if (player1->get_is_goalkeeper())
             player1->get_team_pointer().lock()->setGoalkeeperCount(player1->get_team_pointer().lock()->getGoalkeeperCount() +1);//if player is goalkeeper add 1 to team's goalkeeper count
-        if (player1->get_team_pointer().lock()->getGoalkeeperCount() > 0 &&player1->get_team_pointer().lock()->getPlayerCount() > 10) {//add team to current active teams if suitable
-            shared_ptr<Team> left1(new Team(0,0));
-            shared_ptr<Team> right1(new Team(0,0));
+        if (player1->get_team_pointer().lock()->getGoalkeeperCount() > 0 && player1->get_team_pointer().lock()->getPlayerCount() > 10) {//add team to current active teams if suitable
+            shared_ptr<Team> left1(new Team(0, 0));
+            shared_ptr<Team> right1(new Team(0, 0));
 
 
             current_active_teams.add(player1->get_team_pointer().lock(), &compare_teams_by_id,left1,right1);
