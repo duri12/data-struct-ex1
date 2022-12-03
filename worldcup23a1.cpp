@@ -326,100 +326,114 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
         new_team->setsum_of_player_score(n1->getData()->getsum_of_player_score()+n2->getData()->getsum_of_player_score());
         new_team->setGoalkeeperCount(n1->getData()->getGoalkeeperCount()+n2->getData()->getGoalkeeperCount());
         new_team->setPlayerCount(n1->getData()->getPlayerCount()+n2->getData()->getPlayerCount());
-        if(compare_players_by_Score((n1->getData()->getTeamTopScorer()),n2->getData()->getTeamTopScorer())==-1)
-            new_team->setTeamTopScorer(n1->getData()->getTeamTopScorer());
-        if(compare_players_by_Score((n1->getData()->getTeamTopScorer()),n2->getData()->getTeamTopScorer())==1)
-            new_team->setTeamTopScorer(n2->getData()->getTeamTopScorer());
-        shared_ptr<Player> *player_arr1_byId = new shared_ptr<Player>[n1->getData()->getPlayerCount()];
-        shared_ptr<Player> *player_arr1_byScore = new shared_ptr<Player>[n1->getData()->getPlayerCount()];
-        shared_ptr<Player> *player_arr2_byId = new shared_ptr<Player>[n2->getData()->getPlayerCount()];
-        shared_ptr<Player> *player_arr2_byScore = new shared_ptr<Player>[n2->getData()->getPlayerCount()];
-        shared_ptr<Player> *finalarray_byId = new shared_ptr<Player>[n1->getData()->getPlayerCount()+n2->getData()->getPlayerCount()];
-        shared_ptr<Player> *finalarray_byScore = new shared_ptr<Player>[n1->getData()->getPlayerCount()+n2->getData()->getPlayerCount()];
-        n1->getData()->treeToArrayInOrder_for_team_byId(player_arr1_byId,n1->getData()->getPlayerCount());
-        n2->getData()->treeToArrayInOrder_for_team_byId(player_arr2_byId,n2->getData()->getPlayerCount());
-        n1->getData()->treeToArrayInOrder_for_team_byscore(player_arr1_byScore,n1->getData()->getPlayerCount());
-        n2->getData()->treeToArrayInOrder_for_team_byscore(player_arr2_byScore,n2->getData()->getPlayerCount());
-        for(int i=0;i<n1->getData()->getPlayerCount();i++){
-            player_arr1_byId[i]->set_games_played(player_arr1_byId[i]->get_games_played()+n1->getData()->getAdditionalGamesPlayed());
-        }
-        n1->getData()->setAdditionalGamesPlayed(0);
-        for(int i=0;i<n2->getData()->getPlayerCount();i++){
-            player_arr2_byScore[i]->set_games_played(player_arr2_byScore[i]->get_games_played()+n1->getData()->getAdditionalGamesPlayed());
-        }
-        n2->getData()->setAdditionalGamesPlayed(0);
-        int i=0,j=0;
-        while(i<n1->getData()->getPlayerCount()||j<n2->getData()->getPlayerCount()){
-        if(i>=n1->getData()->getPlayerCount()){
-            finalarray_byId[i+j]=player_arr2_byId[j];
-            j++;
-        }
-        else if(j>=n2->getData()->getPlayerCount())
-            finalarray_byId[i+j]=player_arr2_byId[i];
-        else {
-            if (compare_players_by_ID(player_arr1_byId[i], player_arr2_byId[j]) == -1)
-                finalarray_byId[i + j] = player_arr2_byId[j];
-            if (compare_players_by_ID(player_arr1_byId[i], player_arr2_byId[j]) == 1)
-                finalarray_byId[i + j] = player_arr1_byId[i];
-            i++;
-            j++;
 
-
-        }
-        }
-        i=0;
-        j=0;
-        while(i<n1->getData()->getPlayerCount()||j<n2->getData()->getPlayerCount()){
-            if(i>=n1->getData()->getPlayerCount()){
-                finalarray_byScore[i+j]=player_arr2_byScore[j];
-                j++;
+        if(n1->getData()->getTeamTopScorer()!= nullptr&&n2->getData()->getTeamTopScorer()!= nullptr) {
+            if (compare_players_by_Score((n1->getData()->getTeamTopScorer()), n2->getData()->getTeamTopScorer()) == -1)
+                new_team->setTeamTopScorer(n1->getData()->getTeamTopScorer());
+            if (compare_players_by_Score((n1->getData()->getTeamTopScorer()), n2->getData()->getTeamTopScorer()) == 1)
+                new_team->setTeamTopScorer(n2->getData()->getTeamTopScorer());
+            shared_ptr<Player> *player_arr1_byId = new shared_ptr<Player>[n1->getData()->getPlayerCount()];
+            shared_ptr<Player> *player_arr1_byScore = new shared_ptr<Player>[n1->getData()->getPlayerCount()];
+            shared_ptr<Player> *player_arr2_byId = new shared_ptr<Player>[n2->getData()->getPlayerCount()];
+            shared_ptr<Player> *player_arr2_byScore = new shared_ptr<Player>[n2->getData()->getPlayerCount()];
+            shared_ptr<Player> *finalarray_byId = new shared_ptr<Player>[n1->getData()->getPlayerCount() +
+                                                                         n2->getData()->getPlayerCount()];
+            shared_ptr<Player> *finalarray_byScore = new shared_ptr<Player>[n1->getData()->getPlayerCount() +
+                                                                            n2->getData()->getPlayerCount()];
+            n1->getData()->treeToArrayInOrder_for_team_byId(player_arr1_byId, n1->getData()->getPlayerCount());
+            n2->getData()->treeToArrayInOrder_for_team_byId(player_arr2_byId, n2->getData()->getPlayerCount());
+            n1->getData()->treeToArrayInOrder_for_team_byscore(player_arr1_byScore, n1->getData()->getPlayerCount());
+            n2->getData()->treeToArrayInOrder_for_team_byscore(player_arr2_byScore, n2->getData()->getPlayerCount());
+            for (int i = 0; i < n1->getData()->getPlayerCount(); i++) {
+                player_arr1_byId[i]->set_games_played(
+                        player_arr1_byId[i]->get_games_played() + n1->getData()->getAdditionalGamesPlayed());
             }
-            else if(j>=n2->getData()->getPlayerCount())
-                finalarray_byScore[i+j]=player_arr2_byScore[i];
-            else {
-                if (compare_players_by_Score(player_arr1_byScore[i], player_arr2_byScore[j]) == -1)
+            n1->getData()->setAdditionalGamesPlayed(0);
+            for (int i = 0; i < n2->getData()->getPlayerCount(); i++) {
+                player_arr2_byScore[i]->set_games_played(
+                        player_arr2_byScore[i]->get_games_played() + n1->getData()->getAdditionalGamesPlayed());
+            }
+            n2->getData()->setAdditionalGamesPlayed(0);
+            int i = 0, j = 0;
+            while (i < n1->getData()->getPlayerCount() || j < n2->getData()->getPlayerCount()) {
+                if (i >= n1->getData()->getPlayerCount()) {
+                    finalarray_byId[i + j] = player_arr2_byId[j];
+                    j++;
+                } else if (j >= n2->getData()->getPlayerCount())
+                    finalarray_byId[i + j] = player_arr2_byId[i];
+                else {
+                    if (compare_players_by_ID(player_arr1_byId[i], player_arr2_byId[j]) == -1)
+                        finalarray_byId[i + j] = player_arr2_byId[j];
+                    if (compare_players_by_ID(player_arr1_byId[i], player_arr2_byId[j]) == 1)
+                        finalarray_byId[i + j] = player_arr1_byId[i];
+                    i++;
+                    j++;
+
+
+                }
+            }
+            i = 0;
+            j = 0;
+            while (i < n1->getData()->getPlayerCount() || j < n2->getData()->getPlayerCount()) {
+                if (i >= n1->getData()->getPlayerCount()) {
                     finalarray_byScore[i + j] = player_arr2_byScore[j];
-                if (compare_players_by_Score(player_arr1_byScore[i], player_arr2_byScore[j]) == 1)
-                    finalarray_byScore[i + j] = player_arr1_byScore[i];
-                i++;
-                j++;
+                    j++;
+                } else if (j >= n2->getData()->getPlayerCount())
+                    finalarray_byScore[i + j] = player_arr2_byScore[i];
+                else {
+                    if (compare_players_by_Score(player_arr1_byScore[i], player_arr2_byScore[j]) == -1)
+                        finalarray_byScore[i + j] = player_arr2_byScore[j];
+                    if (compare_players_by_Score(player_arr1_byScore[i], player_arr2_byScore[j]) == 1)
+                        finalarray_byScore[i + j] = player_arr1_byScore[i];
+                    i++;
+                    j++;
 
 
+                }
             }
-        }
-        if(!new_team->create_tree_from_array_by_Id(finalarray_byId,(n1->getData()->getPlayerCount()+n2->getData()->getPlayerCount())))
-            return StatusType::FAILURE;
-        if(!new_team->create_tree_from_array_by_Score(finalarray_byScore,n2->getData()->getPlayerCount()+n2->getData()->getPlayerCount()))
-            return StatusType::FAILURE;
+            if (!new_team->create_tree_from_array_by_Id(finalarray_byId, (n1->getData()->getPlayerCount() +
+                                                                          n2->getData()->getPlayerCount())))
+                return StatusType::FAILURE;
+            if (!new_team->create_tree_from_array_by_Score(finalarray_byScore, n2->getData()->getPlayerCount() +
+                                                                               n2->getData()->getPlayerCount()))
+                return StatusType::FAILURE;
 
-        if(new_team->getPlayerCount()>10&&new_team->getGoalkeeperCount()>0) {
-            shared_ptr<Team> left(new Team(0,0));
-            shared_ptr<Team> right(new Team(0,0));
-            current_active_teams.add(new_team, compare_teams_by_id, left,right);
-            if(left->getteamID() != new_team->getteamID()) {
-                new_team->setglobal_left_closest_team(left);
+            if (new_team->getPlayerCount() > 10 && new_team->getGoalkeeperCount() > 0) {
+                shared_ptr<Team> left(new Team(0, 0));
+                shared_ptr<Team> right(new Team(0, 0));
+                current_active_teams.add(new_team, compare_teams_by_id, left, right);
+                if (left->getteamID() != new_team->getteamID()) {
+                    new_team->setglobal_left_closest_team(left);
+                }
+                if (right->getteamID() != new_team->getteamID()) {
+                    new_team->setglobal_right_closest_team(right);
+                }
+                if(new_team->getglobal_right_closest_team().lock() != nullptr)
+                new_team->getglobal_right_closest_team().lock()->setglobal_left_closest_team(new_team);
+                if(new_team->getglobal_left_closest_team().lock() != nullptr)
+                new_team->getglobal_left_closest_team().lock()->setglobal_right_closest_team(new_team);
             }
-            if(right->getteamID() !=new_team->getteamID()){
-                new_team->setglobal_right_closest_team(right);
+            if (n1->getData()->getPlayerCount() > 10 && n1->getData()->getGoalkeeperCount() > 0) {
+                current_active_teams.remove(n1->getData(), &compare_teams_by_id);
+                if(n1->getData()->getglobal_right_closest_team().lock()!=nullptr)
+                n1->getData()->getglobal_right_closest_team().lock()->setglobal_left_closest_team(n1->getData()->getglobal_left_closest_team());
+                if(n1->getData()->getglobal_left_closest_team().lock()!=nullptr)
+                    n1->getData()->getglobal_left_closest_team().lock()->setglobal_right_closest_team(
+                        n1->getData()->getglobal_right_closest_team());
             }
-            new_team->getglobal_right_closest_team().lock()->setglobal_left_closest_team(new_team);
-            new_team->getglobal_left_closest_team().lock()->setglobal_right_closest_team(new_team);
+            if (n2->getData()->getPlayerCount() > 10 && n2->getData()->getGoalkeeperCount() > 0) {
+                current_active_teams.remove(n1->getData(), &compare_teams_by_id);
+               if(n2->getData()->getglobal_right_closest_team().lock()!= nullptr)
+                n2->getData()->getglobal_right_closest_team().lock()->setglobal_left_closest_team(n2->getData()->getglobal_left_closest_team());
+                if(n2->getData()->getglobal_left_closest_team().lock()!= nullptr)
+                    n2->getData()->getglobal_left_closest_team().lock()->setglobal_right_closest_team(
+                        n2->getData()->getglobal_right_closest_team());
+            }
+            n1->getData()->setPlayerCount(0);
+            n2->getData()->setPlayerCount(0);
+            teams_tree.remove(n1->getData(), &compare_teams_by_id);
+            teams_tree.remove(n2->getData(), &compare_teams_by_id);
         }
-        if(n1->getData()->getPlayerCount()>10&&n1->getData()->getGoalkeeperCount()>0) {
-            current_active_teams.remove(n1->getData(), &compare_teams_by_id);
-            n1->getData()->getglobal_right_closest_team().lock()->setglobal_left_closest_team(n1->getData()->getglobal_left_closest_team());
-            n1->getData()->getglobal_left_closest_team().lock()->setglobal_right_closest_team(n1->getData()->getglobal_right_closest_team());
-        }
-        if(n2->getData()->getPlayerCount()>10&&n2->getData()->getGoalkeeperCount()>0) {
-            current_active_teams.remove(n1->getData(), &compare_teams_by_id);
-            n2->getData()->getglobal_right_closest_team().lock()->setglobal_left_closest_team(n2->getData()->getglobal_left_closest_team());
-            n2->getData()->getglobal_left_closest_team().lock()->setglobal_right_closest_team(n2->getData()->getglobal_right_closest_team());
-        }
-        n1->getData()->setPlayerCount(0);
-        n2->getData()->setPlayerCount(0);
-        teams_tree.remove(n1->getData(),&compare_teams_by_id);
-        teams_tree.remove(n2->getData(),&compare_teams_by_id);
-
     }
     catch (std::bad_alloc) {
         return StatusType::ALLOCATION_ERROR;
