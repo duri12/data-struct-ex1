@@ -431,9 +431,12 @@ output_t<int> world_cup_t::get_top_scorer(int teamId) {
     if (teamId == 0)
         return output_t<int>(StatusType::INVALID_INPUT);
     try {
-        if (teamId < 0)
+        if (teamId < 0) {
+            if(top_scorer== nullptr)
+                return output_t<int>(StatusType::FAILURE);
             return output_t<int>(top_scorer->get_player_ID());
-        if (teamId > 0) {
+        }
+            if (teamId > 0) {
             std::shared_ptr<Team> team1(new Team(teamId, 0));
             Node<shared_ptr<Team>> *n1 = teams_tree.find(team1, &compare_teams_by_id);
             if (n1 == nullptr)
