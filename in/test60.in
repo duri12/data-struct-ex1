@@ -25,3 +25,4 @@ add_player 24 2 24 24 24 true
 add_player 12 1 12 12 12 true
 add_player 25 2 25 25 25 true
 unite_teams 1 2 3
+get_all_players_count 3
