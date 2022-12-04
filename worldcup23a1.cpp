@@ -619,14 +619,19 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) {
             return output_t<int>(StatusType::FAILURE);
         first_team = *current_active_teams.findMinBiggerThanX(minteam, &compare_teams_by_id);
         last_team = *current_active_teams.findMaxLowerThanX(maxteam, &compare_teams_by_id);
+        if(first_team==last_team) {
+            if (first_team->getteamID() < maxTeamId && current_team->getteamID() > minTeamId)
+                return output_t<int>(first_team->getteamID());
+            return output_t<int>(StatusType::FAILURE);
+        }
         current_team = first_team;
-        int r = 0;
+        int r = 1;
         while (current_team != last_team && current_team != nullptr) {
             if(current_team->getteamID()<maxTeamId&&current_team->getteamID()> minTeamId)
                 r++;
             current_team = current_team->getglobal_right_closest_team().lock();
         }
-        if(r==0)
+        if(r==1)
             return output_t<int>(StatusType::FAILURE);
         current_team = first_team;
         game_teams *playing_teams = new game_teams[r];
