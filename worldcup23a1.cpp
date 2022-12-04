@@ -372,16 +372,7 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
             if (!new_team->create_tree_from_array_by_Score(finalarray_byScore, n2->getData()->getPlayerCount() +n1->getData()->getPlayerCount()))
                 return StatusType::FAILURE;
             teams_tree.remove(n1->getData(), &compare_teams_by_id);
-
-
-
-
-
         }
-
-
-
-
         if(n1->getData()->getTeamTopScorer()!= nullptr&&n2->getData()->getTeamTopScorer()!= nullptr) {
             if (compare_players_by_Score((n1->getData()->getTeamTopScorer()), n2->getData()->getTeamTopScorer()) == -1)
                 new_team->setTeamTopScorer(n1->getData()->getTeamTopScorer());
@@ -508,7 +499,7 @@ output_t<int> world_cup_t::get_top_scorer(int teamId) {
             if (teamId > 0) {
             std::shared_ptr<Team> team1(new Team(teamId, 0));
             Node<shared_ptr<Team>> *n1 = teams_tree.find(team1, &compare_teams_by_id);
-            if (n1 == nullptr)
+            if (n1 == nullptr||n1->getData()->getTeamTopScorer()==nullptr)
                 return output_t<int>(StatusType::FAILURE);
             return output_t<int>(n1->getData()->getTeamTopScorer()->get_player_ID());
 
@@ -622,14 +613,18 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) {
         std::shared_ptr<Team> last_team(new Team(0, 0));
         std::shared_ptr<Team> current_team(new Team(0, 0));
 
-
+        if(current_active_teams.findMinBiggerThanX(minteam, &compare_teams_by_id)== nullptr)
+            return output_t<int>(StatusType::FAILURE);
+        if(current_active_teams.findMaxLowerThanX(maxteam, &compare_teams_by_id)== nullptr)
+            return output_t<int>(StatusType::FAILURE);
         first_team = *current_active_teams.findMinBiggerThanX(minteam, &compare_teams_by_id);
         last_team = *current_active_teams.findMaxLowerThanX(maxteam, &compare_teams_by_id);
         current_team = first_team;
         int r = 0;
         while (current_team != last_team && current_team != nullptr) {
+            if(current_team->getteamID()<maxTeamId&&current_team->getteamID()> minTeamId)
+                r++;
             current_team = current_team->getglobal_right_closest_team().lock();
-            r++;
         }
         if(r==0)
             return output_t<int>(StatusType::FAILURE);
