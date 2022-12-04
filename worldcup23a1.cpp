@@ -326,6 +326,61 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
         new_team->setsum_of_player_score(n1->getData()->getsum_of_player_score()+n2->getData()->getsum_of_player_score());
         new_team->setGoalkeeperCount(n1->getData()->getGoalkeeperCount()+n2->getData()->getGoalkeeperCount());
         new_team->setPlayerCount(n1->getData()->getPlayerCount()+n2->getData()->getPlayerCount());
+        if(n1->getData()->getTeamTopScorer()!=nullptr&&n2->getData()->getTeamTopScorer()==nullptr) {
+            shared_ptr<Player> *player_arr1_byId = new shared_ptr<Player>[n1->getData()->getPlayerCount()];
+            shared_ptr<Player> *player_arr1_byScore = new shared_ptr<Player>[n1->getData()->getPlayerCount()];
+            shared_ptr<Player> *finalarray_byId = new shared_ptr<Player>[n1->getData()->getPlayerCount() +
+                                                                         n2->getData()->getPlayerCount()];
+            shared_ptr<Player> *finalarray_byScore = new shared_ptr<Player>[n1->getData()->getPlayerCount() +
+                                                                            n2->getData()->getPlayerCount()];
+            n1->getData()->treeToArrayInOrder_for_team_byId(player_arr1_byId, n1->getData()->getPlayerCount());
+            n1->getData()->treeToArrayInOrder_for_team_byscore(player_arr1_byScore, n1->getData()->getPlayerCount());
+            for (int i = 0; i < n1->getData()->getPlayerCount(); i++) {
+                player_arr1_byId[i]->set_games_played(
+                        player_arr1_byId[i]->get_games_played() + n1->getData()->getAdditionalGamesPlayed());
+                finalarray_byId[i] = player_arr1_byId[i];
+                finalarray_byScore[i] = player_arr1_byScore[i];
+            }
+            if (!new_team->create_tree_from_array_by_Id(finalarray_byId, (n1->getData()->getPlayerCount() +n2->getData()->getPlayerCount())))
+                return StatusType::FAILURE;
+            if (!new_team->create_tree_from_array_by_Score(finalarray_byScore, n2->getData()->getPlayerCount() +n2->getData()->getPlayerCount()))
+                return StatusType::FAILURE;
+            teams_tree.remove(n2->getData(), &compare_teams_by_id);
+
+
+
+
+
+        }
+        if(n2->getData()->getTeamTopScorer()!=nullptr&&n1->getData()->getTeamTopScorer()==nullptr) {
+            shared_ptr<Player> *player_arr1_byId = new shared_ptr<Player>[n2->getData()->getPlayerCount()];
+            shared_ptr<Player> *player_arr1_byScore = new shared_ptr<Player>[n2->getData()->getPlayerCount()];
+            shared_ptr<Player> *finalarray_byId = new shared_ptr<Player>[n2->getData()->getPlayerCount() +
+                                                                         n1->getData()->getPlayerCount()];
+            shared_ptr<Player> *finalarray_byScore = new shared_ptr<Player>[n2->getData()->getPlayerCount() +
+                                                                            n1->getData()->getPlayerCount()];
+            n2->getData()->treeToArrayInOrder_for_team_byId(player_arr1_byId, n2->getData()->getPlayerCount());
+            n2->getData()->treeToArrayInOrder_for_team_byscore(player_arr1_byScore, n2->getData()->getPlayerCount());
+            for (int i = 0; i < n2->getData()->getPlayerCount(); i++) {
+                player_arr1_byId[i]->set_games_played(
+                        player_arr1_byId[i]->get_games_played() + n2->getData()->getAdditionalGamesPlayed());
+                finalarray_byId[i] = player_arr1_byId[i];
+                finalarray_byScore[i] = player_arr1_byScore[i];
+            }
+            if (!new_team->create_tree_from_array_by_Id(finalarray_byId, (n2->getData()->getPlayerCount() +n1->getData()->getPlayerCount())))
+                return StatusType::FAILURE;
+            if (!new_team->create_tree_from_array_by_Score(finalarray_byScore, n2->getData()->getPlayerCount() +n1->getData()->getPlayerCount()))
+                return StatusType::FAILURE;
+            teams_tree.remove(n1->getData(), &compare_teams_by_id);
+
+
+
+
+
+        }
+
+
+
 
         if(n1->getData()->getTeamTopScorer()!= nullptr&&n2->getData()->getTeamTopScorer()!= nullptr) {
             if (compare_players_by_Score((n1->getData()->getTeamTopScorer()), n2->getData()->getTeamTopScorer()) == -1)
@@ -394,7 +449,7 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
             if (!new_team->create_tree_from_array_by_Id(finalarray_byId, (n1->getData()->getPlayerCount() +
                                                                           n2->getData()->getPlayerCount())))
                 return StatusType::FAILURE;
-            if (!new_team->create_tree_from_array_by_Score(finalarray_byScore, n2->getData()->getPlayerCount() +
+            if (!new_team->create_tree_from_array_by_Score(finalarray_byScore, n1->getData()->getPlayerCount() +
                                                                                n2->getData()->getPlayerCount()))
                 return StatusType::FAILURE;
 
