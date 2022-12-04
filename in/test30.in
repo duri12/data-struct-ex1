@@ -1,0 +1,3 @@
+add_team 1 1
+add_player 1 1 1 1 1 true
+remove_player 8

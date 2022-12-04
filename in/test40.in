@@ -1,0 +1,5 @@
+add_team 1 1
+add_player 1 1 1 1 1 true
+add_player 2 1 1 1 1 true
+update_player_stats 2 20 20 20
+update_player_stats 1 10 10 10
