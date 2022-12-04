@@ -1,4 +1,0 @@
-add_team 2 2
-add_player 2 2 2 2 2 true
-get_top_scorer 2
-get_top_scorer -2
