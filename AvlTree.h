@@ -184,7 +184,6 @@ bool AvlTree<T>::add(const T &value, int (*compare)(T, T),T &left ,  T &right) {
     if (this->_root == nullptr){
         try{
             this->_root = new Node<T>(value);
-
         }
         catch(std::bad_alloc&){
             throw;
@@ -455,8 +454,7 @@ const T &AvlTree<T>::findMin() {
 }
 
 template<typename T>
-Node<T> *
-AvlTree<T>::insert(const T &value, Node<T> *current_node, int (*compare)(T, T),T& left ,  T& right) {
+Node<T> *AvlTree<T>::insert(const T &value, Node<T> *current_node, int (*compare)(T, T),T& left ,  T& right) {
     if(compare == nullptr){
         return  nullptr;
     }

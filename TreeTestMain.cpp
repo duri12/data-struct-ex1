@@ -20,7 +20,7 @@ int compare2(shared_ptr<int> a , shared_ptr<int> b){
     return 0;
 }
 int main(){
-
+/*
     auto* tree = new AvlTree<int>;
     int c =-1 ,b =-1;
     tree->add(1,compare);
@@ -99,5 +99,17 @@ int main(){
     }
     tree->print();
     delete tree;
+    */
+    int playerId = 1;
+    for (int teamId = 1; teamId < 10; teamId += 2)
+    {
+        std::cout << "add_team " << teamId<< " " << (1000 / ((6 - teamId) * (6 - teamId)))<< endl;
+
+        for (int startingId = playerId; playerId < startingId + 10 + teamId; ++playerId)
+        {
+            std::cout << "add_player " << playerId <<" "<<  teamId<<" " <<1 <<" "<< playerId << " "<< 3 <<" "<<"true"<<endl;
+        }
+        ++playerId;
+    }
     return 0;
 }
