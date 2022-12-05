@@ -321,8 +321,10 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
         if (n1 == nullptr || n2 == nullptr)
             return StatusType::FAILURE;
         std::shared_ptr<Team> new_team(new Team(newTeamId,n1->getData()->getTeamPoints()+n2->getData()->getTeamPoints()));
-        if(!teams_tree.add(new_team,&compare_teams_by_id))
-            return StatusType::FAILURE;
+        if(newTeamId!=teamId1&&newTeamId!=teamId2) {
+            if (!teams_tree.add(new_team, &compare_teams_by_id))
+                return StatusType::FAILURE;
+        }
         new_team->setsum_of_player_score(n1->getData()->getsum_of_player_score()+n2->getData()->getsum_of_player_score());
         new_team->setGoalkeeperCount(n1->getData()->getGoalkeeperCount()+n2->getData()->getGoalkeeperCount());
         new_team->setPlayerCount(n1->getData()->getPlayerCount()+n2->getData()->getPlayerCount());
@@ -408,12 +410,12 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
                 } else if (j >= n2->getData()->getPlayerCount())
                     finalarray_byId[i + j] = player_arr2_byId[i];
                 else {
-                    if (compare_players_by_ID(player_arr1_byId[i], player_arr2_byId[j]) == -1)
+                    if (compare_players_by_ID(player_arr1_byId[i], player_arr2_byId[j]) == -1){
                         finalarray_byId[i + j] = player_arr2_byId[j];
-                    if (compare_players_by_ID(player_arr1_byId[i], player_arr2_byId[j]) == 1)
+                         j++;}
+                    if (compare_players_by_ID(player_arr1_byId[i], player_arr2_byId[j]) == 1){
                         finalarray_byId[i + j] = player_arr1_byId[i];
-                    i++;
-                    j++;
+                         i++;}
 
 
                 }
@@ -424,15 +426,17 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
                 if (i >= n1->getData()->getPlayerCount()) {
                     finalarray_byScore[i + j] = player_arr2_byScore[j];
                     j++;
-                } else if (j >= n2->getData()->getPlayerCount())
+                } else if (j >= n2->getData()->getPlayerCount()){
                     finalarray_byScore[i + j] = player_arr2_byScore[i];
+                    i++;}
                 else {
-                    if (compare_players_by_Score(player_arr1_byScore[i], player_arr2_byScore[j]) == -1)
+                    if (compare_players_by_Score(player_arr1_byScore[i], player_arr2_byScore[j]) == -1){
                         finalarray_byScore[i + j] = player_arr2_byScore[j];
-                    if (compare_players_by_Score(player_arr1_byScore[i], player_arr2_byScore[j]) == 1)
+                        j++;}
+                    if (compare_players_by_Score(player_arr1_byScore[i], player_arr2_byScore[j]) == 1) {
                         finalarray_byScore[i + j] = player_arr1_byScore[i];
-                    i++;
-                    j++;
+                        i++;
+                    }
 
 
                 }
@@ -443,42 +447,52 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
             if (!new_team->create_tree_from_array_by_Score(finalarray_byScore, n1->getData()->getPlayerCount() +
                                                                                n2->getData()->getPlayerCount()))
                 return StatusType::FAILURE;
-
-            if (new_team->getPlayerCount() > 10 && new_team->getGoalkeeperCount() > 0) {
-                shared_ptr<Team> left(new Team(0, 0));
-                shared_ptr<Team> right(new Team(0, 0));
-                current_active_teams.add(new_team, compare_teams_by_id, left, right);
-                if (left->getteamID() != new_team->getteamID()) {
-                    new_team->setglobal_left_closest_team(left);
+            if(newTeamId!=teamId1||newTeamId!=teamId2) {
+                if (new_team->getPlayerCount() > 10 && new_team->getGoalkeeperCount() > 0) {
+                    shared_ptr<Team> left(new Team(0, 0));
+                    shared_ptr<Team> right(new Team(0, 0));
+                    current_active_teams.add(new_team, compare_teams_by_id, left, right);
+                    if (left->getteamID() != new_team->getteamID()) {
+                        new_team->setglobal_left_closest_team(left);
+                    }
+                    if (right->getteamID() != new_team->getteamID()) {
+                        new_team->setglobal_right_closest_team(right);
+                    }
+                    if (new_team->getglobal_right_closest_team().lock() != nullptr)
+                        new_team->getglobal_right_closest_team().lock()->setglobal_left_closest_team(new_team);
+                    if (new_team->getglobal_left_closest_team().lock() != nullptr)
+                        new_team->getglobal_left_closest_team().lock()->setglobal_right_closest_team(new_team);
                 }
-                if (right->getteamID() != new_team->getteamID()) {
-                    new_team->setglobal_right_closest_team(right);
+            }
+            if(teamId1!=newTeamId) {
+                if (n1->getData()->getPlayerCount() > 10 && n1->getData()->getGoalkeeperCount() > 0) {
+                    current_active_teams.remove(n1->getData(), &compare_teams_by_id);
+                    if (n1->getData()->getglobal_right_closest_team().lock() != nullptr)
+                        n1->getData()->getglobal_right_closest_team().lock()->setglobal_left_closest_team(
+                                n1->getData()->getglobal_left_closest_team());
+                    if (n1->getData()->getglobal_left_closest_team().lock() != nullptr)
+                        n1->getData()->getglobal_left_closest_team().lock()->setglobal_right_closest_team(
+                                n1->getData()->getglobal_right_closest_team());
                 }
-                if(new_team->getglobal_right_closest_team().lock() != nullptr)
-                new_team->getglobal_right_closest_team().lock()->setglobal_left_closest_team(new_team);
-                if(new_team->getglobal_left_closest_team().lock() != nullptr)
-                new_team->getglobal_left_closest_team().lock()->setglobal_right_closest_team(new_team);
             }
-            if (n1->getData()->getPlayerCount() > 10 && n1->getData()->getGoalkeeperCount() > 0) {
-                current_active_teams.remove(n1->getData(), &compare_teams_by_id);
-                if(n1->getData()->getglobal_right_closest_team().lock()!=nullptr)
-                n1->getData()->getglobal_right_closest_team().lock()->setglobal_left_closest_team(n1->getData()->getglobal_left_closest_team());
-                if(n1->getData()->getglobal_left_closest_team().lock()!=nullptr)
-                    n1->getData()->getglobal_left_closest_team().lock()->setglobal_right_closest_team(
-                        n1->getData()->getglobal_right_closest_team());
-            }
-            if (n2->getData()->getPlayerCount() > 10 && n2->getData()->getGoalkeeperCount() > 0) {
-                current_active_teams.remove(n1->getData(), &compare_teams_by_id);
-               if(n2->getData()->getglobal_right_closest_team().lock()!= nullptr)
-                n2->getData()->getglobal_right_closest_team().lock()->setglobal_left_closest_team(n2->getData()->getglobal_left_closest_team());
-                if(n2->getData()->getglobal_left_closest_team().lock()!= nullptr)
-                    n2->getData()->getglobal_left_closest_team().lock()->setglobal_right_closest_team(
-                        n2->getData()->getglobal_right_closest_team());
+            if(teamId2!=newTeamId) {
+                if (n2->getData()->getPlayerCount() > 10 && n2->getData()->getGoalkeeperCount() > 0) {
+                    current_active_teams.remove(n1->getData(), &compare_teams_by_id);
+                    if (n2->getData()->getglobal_right_closest_team().lock() != nullptr)
+                        n2->getData()->getglobal_right_closest_team().lock()->setglobal_left_closest_team(
+                                n2->getData()->getglobal_left_closest_team());
+                    if (n2->getData()->getglobal_left_closest_team().lock() != nullptr)
+                        n2->getData()->getglobal_left_closest_team().lock()->setglobal_right_closest_team(
+                                n2->getData()->getglobal_right_closest_team());
+                }
             }
             n1->getData()->setPlayerCount(0);
             n2->getData()->setPlayerCount(0);
             teams_tree.remove(n1->getData(), &compare_teams_by_id);
             teams_tree.remove(n2->getData(), &compare_teams_by_id);
+            if(newTeamId==teamId1||newTeamId==teamId2)
+                teams_tree.add(new_team, &compare_teams_by_id);
+
         }
     }
     catch (std::bad_alloc) {
