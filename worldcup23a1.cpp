@@ -166,7 +166,7 @@ StatusType world_cup_t::remove_player(int playerId)
                 if (players_tree_by_score.getRoot() == nullptr) {
                     top_scorer = nullptr;
                 } else {
-                    top_scorer = n1->getData();
+                    top_scorer = players_tree_by_score.findMax();
                 }
             }
         }
