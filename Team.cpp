@@ -35,7 +35,7 @@ bool Team::remove_player_from_team_by_ID(std::shared_ptr<Player> player1)
 }
 bool Team::remove_player_from_team_by_Score(std::shared_ptr<Player> player1)
 {
-    return players_in_team_by_score.remove(player1,&compare_players_by_ID);
+    return players_in_team_by_score.remove(player1,&compare_players_by_Score);
 }
 Node<std::shared_ptr<Player>>* Team::find_player_by_ID(std::shared_ptr<Player> player1){
     return players_in_team_by_id.find(player1,&compare_players_by_ID);
