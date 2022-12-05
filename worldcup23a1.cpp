@@ -457,7 +457,27 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
             if (!new_team->create_tree_from_array_by_Score(finalarray_byScore, n1->getData()->getPlayerCount() +
                                                                                n2->getData()->getPlayerCount()))
                 return StatusType::FAILURE;
-            if(newTeamId!=teamId1||newTeamId!=teamId2) {
+
+            if (n1->getData()->getPlayerCount() > 10 && n1->getData()->getGoalkeeperCount() > 0) {
+                current_active_teams.remove(n1->getData(), &compare_teams_by_id);
+                if (n1->getData()->getglobal_right_closest_team().lock() != nullptr)
+                    n1->getData()->getglobal_right_closest_team().lock()->setglobal_left_closest_team(
+                            n1->getData()->getglobal_left_closest_team());
+                if (n1->getData()->getglobal_left_closest_team().lock() != nullptr)
+                    n1->getData()->getglobal_left_closest_team().lock()->setglobal_right_closest_team(
+                            n1->getData()->getglobal_right_closest_team());
+            }
+
+
+            if (n2->getData()->getPlayerCount() > 10 && n2->getData()->getGoalkeeperCount() > 0) {
+                current_active_teams.remove(n2->getData(), &compare_teams_by_id);
+                if (n2->getData()->getglobal_right_closest_team().lock() != nullptr)
+                    n2->getData()->getglobal_right_closest_team().lock()->setglobal_left_closest_team(
+                            n2->getData()->getglobal_left_closest_team());
+                if (n2->getData()->getglobal_left_closest_team().lock() != nullptr)
+                    n2->getData()->getglobal_left_closest_team().lock()->setglobal_right_closest_team(
+                            n2->getData()->getglobal_right_closest_team());
+            }
                 if (new_team->getPlayerCount() > 10 && new_team->getGoalkeeperCount() > 0) {
                     shared_ptr<Team> left(new Team(0, 0));
                     shared_ptr<Team> right(new Team(0, 0));
@@ -473,29 +493,10 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
                     if (new_team->getglobal_left_closest_team().lock() != nullptr)
                         new_team->getglobal_left_closest_team().lock()->setglobal_right_closest_team(new_team);
                 }
-            }
-            if(teamId1!=newTeamId) {
-                if (n1->getData()->getPlayerCount() > 10 && n1->getData()->getGoalkeeperCount() > 0) {
-                    current_active_teams.remove(n1->getData(), &compare_teams_by_id);
-                    if (n1->getData()->getglobal_right_closest_team().lock() != nullptr)
-                        n1->getData()->getglobal_right_closest_team().lock()->setglobal_left_closest_team(
-                                n1->getData()->getglobal_left_closest_team());
-                    if (n1->getData()->getglobal_left_closest_team().lock() != nullptr)
-                        n1->getData()->getglobal_left_closest_team().lock()->setglobal_right_closest_team(
-                                n1->getData()->getglobal_right_closest_team());
-                }
-            }
-            if(teamId2!=newTeamId) {
-                if (n2->getData()->getPlayerCount() > 10 && n2->getData()->getGoalkeeperCount() > 0) {
-                    current_active_teams.remove(n1->getData(), &compare_teams_by_id);
-                    if (n2->getData()->getglobal_right_closest_team().lock() != nullptr)
-                        n2->getData()->getglobal_right_closest_team().lock()->setglobal_left_closest_team(
-                                n2->getData()->getglobal_left_closest_team());
-                    if (n2->getData()->getglobal_left_closest_team().lock() != nullptr)
-                        n2->getData()->getglobal_left_closest_team().lock()->setglobal_right_closest_team(
-                                n2->getData()->getglobal_right_closest_team());
-                }
-            }
+
+
+
+
             n1->getData()->setPlayerCount(0);
             n2->getData()->setPlayerCount(0);
             teams_tree.remove(n1->getData(), &compare_teams_by_id);
@@ -570,7 +571,7 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
             for (int i = 0; i < n1->getData()->getPlayerCount(); i++)
                 output[i] = player_arr[i]->get_player_ID();
         }
-            if(teamId>0)
+            if(teamId<0)
         {
             if(total_players_counter==0)
                 return StatusType::FAILURE;
