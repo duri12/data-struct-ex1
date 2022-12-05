@@ -180,7 +180,7 @@ StatusType world_cup_t::remove_player(int playerId)
         if(tempplayer->get_is_goalkeeper())
             tempteam1.lock()->setGoalkeeperCount(tempteam1.lock()->getGoalkeeperCount()-1);
         total_players_counter--;
-        if((tempplayer->get_is_goalkeeper()&&tempteam1.lock()->getGoalkeeperCount()==0)||tempteam1.lock()->getPlayerCount()==10){
+        if((tempplayer->get_is_goalkeeper()&&tempteam1.lock()->getGoalkeeperCount()==0&&tempteam1.lock()->getPlayerCount()>=10)||(tempteam1.lock()->getGoalkeeperCount()>0&&tempteam1.lock()->getPlayerCount()==10)){
             if(!current_active_teams.remove(tempteam1.lock(),&compare_teams_by_id))
                 return StatusType::FAILURE;
             tempteam1.lock()->setglobal_left_closest_team(tempteam1.lock()->getglobal_right_closest_team());
