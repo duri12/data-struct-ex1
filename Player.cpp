@@ -1,5 +1,5 @@
 #include "Player.h"
-Player::Player(int player_ID, int goals_scored, int cards, int games_played, int team_id, bool is_goalkeeper) :player_ID(player_ID),goals_scored(goals_scored),cards(cards),games_played(games_played),team_ID(team_id),is_goalkeeper(is_goalkeeper)
+Player::Player(int player_ID, int goals_scored, int cards, int games_played, int team_id, bool is_goalkeeper) :player_ID(player_ID),goals_scored(goals_scored),cards(cards),games_played(games_played),is_goalkeeper(is_goalkeeper),team_ID(team_id)
 {
     std::shared_ptr<Team> t(nullptr);
     std::shared_ptr<Player> p(nullptr);
