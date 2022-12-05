@@ -90,6 +90,10 @@ int main(){
         tree->add(i,compare);
     }
     tree->print();
+    tree->remove(83,compare);
+    tree->print();
+    tree->remove(39,compare);
+    tree->print();
     for (int i = 99 ; i > 0;i--){
         tree->remove(i,compare);
     }

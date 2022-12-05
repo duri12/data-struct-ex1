@@ -162,7 +162,12 @@ StatusType world_cup_t::remove_player(int playerId)
         if (n1->getData()->get_team_pointer().lock()->getTeamTopScorer() == n1->getData()) {
             n1->getData()->get_team_pointer().lock()->setTeamTopScorer(n1->getData()->get_team_pointer().lock()->find_max_by_Score());
             if (top_scorer == n1->getData())
-                top_scorer = players_tree_by_score.findMax();
+                if(players_tree_by_score.getRoot()== nullptr){
+                    top_scorer = nullptr;
+                }
+                else{
+                    top_scorer = n1->getData();
+                }
         }
         //remove player from last tree and set nre team values
         std::shared_ptr<Player> tempplayer(new Player(0,0,0,0,0,0));
@@ -205,8 +210,12 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
         }
         if (!players_tree_by_score.remove(n1->getData(), &compare_players_by_Score))
             return StatusType::FAILURE;
+
+
         n1->getData()->set_global_left_closest(n1->getData()->get_global_right_closest());
         n1->getData()->set_global_right_closest(n1->getData()->get_global_left_closest());
+
+
         if (!n1->getData()->get_team_pointer().lock()->remove_player_from_team_by_Score(n1->getData()))
             return StatusType::FAILURE;
         n1->getData()->get_team_pointer().lock()->setsum_of_player_score(
@@ -217,6 +226,7 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
 
         shared_ptr<Player> left(new Player(0,0,0,0,0,0));
         shared_ptr<Player> right(new Player(0,0,0,0,0,0));
+        
 
         if (!players_tree_by_score.add(n1->getData(), &compare_players_by_Score,left,right))
             return StatusType::FAILURE;
@@ -641,7 +651,7 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) {
         current_team = first_team;
         int r = 1;
         while (current_team != last_team && current_team != nullptr) {
-            if(current_team->getteamID()<maxTeamId&&current_team->getteamID()> minTeamId)
+            if(current_team->getteamID()<maxTeamId&&current_team->getteamID()>= minTeamId)
                 r++;
             current_team = current_team->getglobal_right_closest_team().lock();
         }
@@ -656,8 +666,9 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) {
         }
 
         int j = 0, i = 0, x = r;
-        while (x > 0) {
+        while (x > 1) {
             i = 0;
+            j=0;
             if (x % 2 == 0) {
                 while (i < x) {
                     if (playing_teams[i].game_points > playing_teams[i + 1].game_points)
@@ -670,7 +681,6 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) {
                         playing_teams[j].id = playing_teams[i + 1].id;
 
                     playing_teams[j].game_points= playing_teams[i].game_points+playing_teams[i + 1].game_points+3;
-
 
                     i = i + 2;
                     j++;
@@ -687,19 +697,20 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) {
                         playing_teams[j].id = playing_teams[i + 1].id;
 
                     playing_teams[j].game_points= playing_teams[i].game_points+playing_teams[i + 1].game_points+3;
-
                     i = i + 2;
                     j++;
                 }
-                playing_teams[j] = playing_teams[i];
 
+                playing_teams[j].id = playing_teams[i].id;
+                playing_teams[j].game_points= playing_teams[i].game_points;
+                x=x+1;
             }
             x = x / 2;
 
         }
         int winner=playing_teams[0].id;
         delete[] playing_teams;
-        return output_t<int>(playing_teams[0].id);
+        return output_t<int>(winner);
     }
     catch (bad_alloc) {
         return output_t<int>(StatusType::ALLOCATION_ERROR);

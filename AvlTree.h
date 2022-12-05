@@ -372,6 +372,7 @@ bool AvlTree<T>::remove(const T &value,int (*compare)(T,T)) {
 
 template<typename T>
 Node<T> *AvlTree<T>::remove(Node<T> *current_node, const T &value,int (*compare)(T,T)) {
+
     if(current_node == nullptr || compare == nullptr){// no value do nothing
         return nullptr;
     }
