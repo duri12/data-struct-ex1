@@ -155,7 +155,7 @@ StatusType world_cup_t::remove_player(int playerId)
         //remove player from trees
         if (!n1->getData()->get_team_pointer().lock()->remove_player_from_team_by_ID(player1))
             return StatusType::FAILURE;
-        if (!n1->getData()->get_team_pointer().lock()->remove_player_from_team_by_Score(player1))
+        if (!n1->getData()->get_team_pointer().lock()->remove_player_from_team_by_Score(n1->getData()))
             return StatusType::FAILURE;
         if (!players_tree_by_score.remove(n1->getData(), &compare_players_by_Score))
             return StatusType::FAILURE;
