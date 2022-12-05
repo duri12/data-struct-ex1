@@ -180,7 +180,7 @@ StatusType world_cup_t::remove_player(int playerId)
             tempteam1.lock()->setGoalkeeperCount(tempteam1.lock()->getGoalkeeperCount()-1);
         total_players_counter--;
         if((tempplayer->get_is_goalkeeper()&&tempteam1.lock()->getGoalkeeperCount()==0)||tempteam1.lock()->getPlayerCount()==10){
-            if(current_active_teams.remove(tempteam1.lock(),&compare_teams_by_id))
+            if(!current_active_teams.remove(tempteam1.lock(),&compare_teams_by_id))
                 return StatusType::FAILURE;
             tempteam1.lock()->setglobal_left_closest_team(tempteam1.lock()->getglobal_right_closest_team());
             tempteam1.lock()->setglobal_right_closest_team(tempteam1.lock()->getglobal_left_closest_team());
@@ -570,7 +570,7 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
             for (int i = 0; i < n1->getData()->getPlayerCount(); i++)
                 output[i] = player_arr[i]->get_player_ID();
         }
-            if(teamId>0)
+        if(teamId<0)
         {
             if(total_players_counter==0)
                 return StatusType::FAILURE;
@@ -664,6 +664,7 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) {
             playing_teams[i].id = current_team->getteamID();
             current_team = current_team->getglobal_right_closest_team().lock();
         }
+        cout << "Playing teams "<< playing_teams[0].game_points << " &" << playing_teams[1].game_points << endl;
 
         int j = 0, i = 0, x = r;
         while (x > 1) {
@@ -679,9 +680,9 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) {
                         playing_teams[j].id = playing_teams[i].id;
                     else
                         playing_teams[j].id = playing_teams[i + 1].id;
-
                     playing_teams[j].game_points= playing_teams[i].game_points+playing_teams[i + 1].game_points+3;
-
+                     cout << "Playing teams "<< playing_teams[i].id << " &" << playing_teams[i+1].id << endl;
+                     cout <<"won "<< playing_teams[j].id<< endl;
                     i = i + 2;
                     j++;
                 }
@@ -697,8 +698,11 @@ output_t<int> world_cup_t::knockout_winner(int minTeamId, int maxTeamId) {
                         playing_teams[j].id = playing_teams[i + 1].id;
 
                     playing_teams[j].game_points= playing_teams[i].game_points+playing_teams[i + 1].game_points+3;
+                    cout << "Playing teams "<< playing_teams[i].id << " &" << playing_teams[i+1].id << endl;
+                    cout <<"won "<< playing_teams[j].id<< endl;
                     i = i + 2;
                     j++;
+
                 }
 
                 playing_teams[j].id = playing_teams[i].id;
