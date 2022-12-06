@@ -117,18 +117,22 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
             shared_ptr<Team> left1(new Team(0, 0));
             shared_ptr<Team> right1(new Team(0, 0));
 
+            Node<shared_ptr<Team>> *test = nullptr;
+            test = current_active_teams.find(player1->get_team_pointer().lock(),&compare_teams_by_id);
+            if(test == nullptr){
+                current_active_teams.add(player1->get_team_pointer().lock(), &compare_teams_by_id,left1,right1);
+                if(left1->getteamID() != player1->get_team_pointer().lock()->getteamID()) {
+                    player1->get_team_pointer().lock()->setglobal_left_closest_team(left1);
+                }
+                if(right1->getteamID() !=player1->get_team_pointer().lock()->getteamID()){
+                    player1->get_team_pointer().lock()->setglobal_right_closest_team(right1);
+                }
+                if(player1->get_team_pointer().lock()->getglobal_left_closest_team().lock()!=nullptr)
+                    player1->get_team_pointer().lock()->getglobal_left_closest_team().lock()->setglobal_right_closest_team(player1->get_team_pointer().lock());
+                if(player1->get_team_pointer().lock()->getglobal_right_closest_team().lock()!=nullptr)
+                    player1->get_team_pointer().lock()->getglobal_right_closest_team().lock()->setglobal_left_closest_team(player1->get_team_pointer().lock());
 
-            current_active_teams.add(player1->get_team_pointer().lock(), &compare_teams_by_id,left1,right1);
-            if(left1->getteamID() != player1->get_team_pointer().lock()->getteamID()) {
-                player1->get_team_pointer().lock()->setglobal_left_closest_team(left1);
             }
-            if(right1->getteamID() !=player1->get_team_pointer().lock()->getteamID()){
-                player1->get_team_pointer().lock()->setglobal_right_closest_team(right1);
-            }
-            if(player1->get_team_pointer().lock()->getglobal_left_closest_team().lock()!=nullptr)
-                player1->get_team_pointer().lock()->getglobal_left_closest_team().lock()->setglobal_right_closest_team(player1->get_team_pointer().lock());
-            if(player1->get_team_pointer().lock()->getglobal_right_closest_team().lock()!=nullptr)
-                player1->get_team_pointer().lock()->getglobal_right_closest_team().lock()->setglobal_left_closest_team(player1->get_team_pointer().lock());
 
         }
     }
