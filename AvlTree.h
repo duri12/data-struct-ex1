@@ -598,7 +598,12 @@ T* AvlTree<T>::findMinBiggerThanX(const T &min, int (*compare)(T, T)) {
 
 template<typename T>
 Node<T>::Node(const T &data) {
-    this->_data = new T(data);
+    try {
+        this->_data = new T(data);
+    }
+    catch (const std::bad_alloc&) {
+        throw;
+    }
     this->_right = nullptr;
     this->_left = nullptr;
     this->_parent = nullptr;

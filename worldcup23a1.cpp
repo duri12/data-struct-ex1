@@ -126,7 +126,7 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
                 player1->get_team_pointer().lock()->setglobal_right_closest_team(right1);
             }
             if(player1->get_team_pointer().lock()->getglobal_left_closest_team().lock()!=nullptr)
-            player1->get_team_pointer().lock()->getglobal_left_closest_team().lock()->setglobal_right_closest_team(player1->get_team_pointer().lock());
+                player1->get_team_pointer().lock()->getglobal_left_closest_team().lock()->setglobal_right_closest_team(player1->get_team_pointer().lock());
             if(player1->get_team_pointer().lock()->getglobal_right_closest_team().lock()!=nullptr)
                 player1->get_team_pointer().lock()->getglobal_right_closest_team().lock()->setglobal_left_closest_team(player1->get_team_pointer().lock());
 
@@ -135,7 +135,7 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
 
     catch(std::bad_alloc)
     {
-        return StatusType::FAILURE;
+        return StatusType::ALLOCATION_ERROR;
     }
 
 	return StatusType::SUCCESS;
@@ -185,8 +185,10 @@ StatusType world_cup_t::remove_player(int playerId)
         if((tempplayer->get_is_goalkeeper()&&tempteam1.lock()->getGoalkeeperCount()==0&&tempteam1.lock()->getPlayerCount()>=10)||(tempteam1.lock()->getGoalkeeperCount()>0&&tempteam1.lock()->getPlayerCount()==10)){
             if(!current_active_teams.remove(tempteam1.lock(),&compare_teams_by_id))
                 return StatusType::FAILURE;
-            tempteam1.lock()->setglobal_left_closest_team(tempteam1.lock()->getglobal_right_closest_team());
-            tempteam1.lock()->setglobal_right_closest_team(tempteam1.lock()->getglobal_left_closest_team());
+            if(tempteam1.lock()->getglobal_left_closest_team().lock()!=nullptr)
+                tempteam1.lock()->getglobal_left_closest_team().lock()->setglobal_right_closest_team(tempteam1.lock()->getglobal_right_closest_team());
+            if(tempteam1.lock()->getglobal_right_closest_team().lock()!=nullptr)
+                tempteam1.lock()->getglobal_right_closest_team().lock()->setglobal_left_closest_team(tempteam1.lock()->getglobal_left_closest_team());
 
         }
         return StatusType::SUCCESS;
