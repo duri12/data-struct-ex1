@@ -1,0 +1,96 @@
+add_team 1 40
+add_player 1 1 1 1 3 true
+add_player 2 1 1 2 3 true
+add_player 3 1 1 3 3 true
+add_player 4 1 1 4 3 true
+add_player 5 1 1 5 3 true
+add_player 6 1 1 6 3 true
+add_player 7 1 1 7 3 true
+add_player 8 1 1 8 3 true
+add_player 9 1 1 9 3 true
+add_player 10 1 1 10 3 true
+add_player 11 1 1 11 3 true
+add_team 3 111
+add_player 13 3 1 13 3 true
+add_player 14 3 1 14 3 true
+add_player 15 3 1 15 3 true
+add_player 16 3 1 16 3 true
+add_player 17 3 1 17 3 true
+add_player 18 3 1 18 3 true
+add_player 19 3 1 19 3 true
+add_player 20 3 1 20 3 true
+add_player 21 3 1 21 3 true
+add_player 22 3 1 22 3 true
+add_player 23 3 1 23 3 true
+add_player 24 3 1 24 3 true
+add_player 25 3 1 25 3 true
+add_team 5 1000
+add_player 27 5 1 27 3 true
+add_player 28 5 1 28 3 true
+add_player 29 5 1 29 3 true
+add_player 30 5 1 30 3 true
+add_player 31 5 1 31 3 true
+add_player 32 5 1 32 3 true
+add_player 33 5 1 33 3 true
+add_player 34 5 1 34 3 true
+add_player 35 5 1 35 3 true
+add_player 36 5 1 36 3 true
+add_player 37 5 1 37 3 true
+add_player 38 5 1 38 3 true
+add_player 39 5 1 39 3 true
+add_player 40 5 1 40 3 true
+add_player 41 5 1 41 3 true
+add_team 7 1000
+add_player 43 7 1 43 3 true
+add_player 44 7 1 44 3 true
+add_player 45 7 1 45 3 true
+add_player 46 7 1 46 3 true
+add_player 47 7 1 47 3 true
+add_player 48 7 1 48 3 true
+add_player 49 7 1 49 3 true
+add_player 50 7 1 50 3 true
+add_player 51 7 1 51 3 true
+add_player 52 7 1 52 3 true
+add_player 53 7 1 53 3 true
+add_player 54 7 1 54 3 true
+add_player 55 7 1 55 3 true
+add_player 56 7 1 56 3 true
+add_player 57 7 1 57 3 true
+add_player 58 7 1 58 3 true
+add_player 59 7 1 59 3 true
+add_team 9 111
+add_player 61 9 1 61 3 true
+add_player 62 9 1 62 3 true
+add_player 63 9 1 63 3 true
+add_player 64 9 1 64 3 true
+add_player 65 9 1 65 3 true
+add_player 66 9 1 66 3 true
+add_player 67 9 1 67 3 true
+add_player 68 9 1 68 3 true
+add_player 69 9 1 69 3 true
+add_player 70 9 1 70 3 true
+add_player 71 9 1 71 3 true
+add_player 72 9 1 72 3 true
+add_player 73 9 1 73 3 true
+add_player 74 9 1 74 3 true
+add_player 75 9 1 75 3 true
+add_player 76 9 1 76 3 true
+add_player 77 9 1 77 3 true
+add_player 78 9 1 78 3 true
+add_player 79 9 1 79 3 true
+add_team 4 1000000
+knockout_winner 8 9
+knockout_winner 1 1
+knockout_winner 2 4
+knockout_winner 3 9
+knockout_winner 2 8
+knockout_winner 0 5
+knockout_winner 1 9
+add_player 999 3 1 3000 200 false
+knockout_winner 1 999
+add_player 998 3 1 2000 0 false
+knockout_winner 0 13
+add_player 997 3 1 1 5001 false
+knockout_winner 0 13
+update_player_stats 79 1 10000 0
+knockout_winner 1 9
