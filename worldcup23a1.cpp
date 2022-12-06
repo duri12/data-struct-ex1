@@ -393,7 +393,7 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
             shared_ptr<Player> *player_arr1_byScore = new shared_ptr<Player>[n1->getData()->getPlayerCount()];
             shared_ptr<Player> *player_arr2_byId = new shared_ptr<Player>[n2->getData()->getPlayerCount()];
             shared_ptr<Player> *player_arr2_byScore = new shared_ptr<Player>[n2->getData()->getPlayerCount()];
-            shared_ptr<Player> *finalarray_byId = new shared_ptr<Player>[n1->getData()->getPlayerCount() +
+            shared_ptr< Player> *finalarray_byId = new shared_ptr<Player>[n1->getData()->getPlayerCount() +
                                                                          n2->getData()->getPlayerCount()];
             shared_ptr<Player> *finalarray_byScore = new shared_ptr<Player>[n1->getData()->getPlayerCount() +
                                                                             n2->getData()->getPlayerCount()];
