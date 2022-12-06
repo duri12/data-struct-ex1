@@ -362,10 +362,20 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
                 finalarray_byId[i] = player_arr1_byId[i];
                 finalarray_byScore[i] = player_arr1_byScore[i];
             }
-            if (!new_team->create_tree_from_array_by_Id(finalarray_byId, (n1->getData()->getPlayerCount() +n2->getData()->getPlayerCount())))
+            if (!new_team->create_tree_from_array_by_Id(finalarray_byId, (n1->getData()->getPlayerCount() +n2->getData()->getPlayerCount()))) {
+                delete[] player_arr1_byId;
+                delete[] player_arr1_byScore;
+                delete[] finalarray_byScore;
+                delete[] finalarray_byId;
                 return StatusType::FAILURE;
-            if (!new_team->create_tree_from_array_by_Score(finalarray_byScore, n2->getData()->getPlayerCount() +n2->getData()->getPlayerCount()))
+            }
+            if (!new_team->create_tree_from_array_by_Score(finalarray_byScore, n2->getData()->getPlayerCount() +n2->getData()->getPlayerCount())) {
+                delete[] player_arr1_byId;
+                delete[] player_arr1_byScore;
+                delete[] finalarray_byScore;
+                delete[] finalarray_byId;
                 return StatusType::FAILURE;
+            }
             teams_tree.remove(n2->getData(), &compare_teams_by_id);
 
         }
@@ -384,10 +394,20 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
                 finalarray_byId[i] = player_arr1_byId[i];
                 finalarray_byScore[i] = player_arr1_byScore[i];
             }
-            if (!new_team->create_tree_from_array_by_Id(finalarray_byId, (n2->getData()->getPlayerCount() +n1->getData()->getPlayerCount())))
+            if (!new_team->create_tree_from_array_by_Id(finalarray_byId, (n2->getData()->getPlayerCount() +n1->getData()->getPlayerCount()))){
+                delete[] player_arr1_byId;
+                delete[] player_arr1_byScore;
+                delete[] finalarray_byScore;
+                delete[] finalarray_byId;
                 return StatusType::FAILURE;
-            if (!new_team->create_tree_from_array_by_Score(finalarray_byScore, n2->getData()->getPlayerCount() +n1->getData()->getPlayerCount()))
+            }
+            if (!new_team->create_tree_from_array_by_Score(finalarray_byScore, n2->getData()->getPlayerCount() +n1->getData()->getPlayerCount())) {
+                delete[] player_arr1_byId;
+                delete[] player_arr1_byScore;
+                delete[] finalarray_byScore;
+                delete[] finalarray_byId;
                 return StatusType::FAILURE;
+            }
             teams_tree.remove(n1->getData(), &compare_teams_by_id);
         }
         if(n1->getData()->getTeamTopScorer()!= nullptr&&n2->getData()->getTeamTopScorer()!= nullptr) {
@@ -425,14 +445,14 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
                 } else if (j >= n2->getData()->getPlayerCount()) {
                     finalarray_byId[i + j] = player_arr1_byId[i];
                     i++;
-                }
-                else {
-                    if (compare_players_by_ID(player_arr1_byId[i], player_arr2_byId[j]) == -1){
+                } else {
+                    if (compare_players_by_ID(player_arr1_byId[i], player_arr2_byId[j]) == -1) {
                         finalarray_byId[i + j] = player_arr2_byId[j];
-                         j++;}
-                    else if (compare_players_by_ID(player_arr1_byId[i], player_arr2_byId[j]) == 1){
+                        j++;
+                    } else if (compare_players_by_ID(player_arr1_byId[i], player_arr2_byId[j]) == 1) {
                         finalarray_byId[i + j] = player_arr1_byId[i];
-                         i++;}
+                        i++;
+                    }
 
 
                 }
@@ -443,14 +463,14 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
                 if (i >= n1->getData()->getPlayerCount()) {
                     finalarray_byScore[i + j] = player_arr2_byScore[j];
                     j++;
-                } else if (j >= n2->getData()->getPlayerCount()){
+                } else if (j >= n2->getData()->getPlayerCount()) {
                     finalarray_byScore[i + j] = player_arr1_byScore[i];
-                    i++;}
-                else {
-                    if (compare_players_by_Score(player_arr1_byScore[i], player_arr2_byScore[j]) == -1){
+                    i++;
+                } else {
+                    if (compare_players_by_Score(player_arr1_byScore[i], player_arr2_byScore[j]) == -1) {
                         finalarray_byScore[i + j] = player_arr2_byScore[j];
-                        j++;}
-                    else if (compare_players_by_Score(player_arr1_byScore[i], player_arr2_byScore[j]) == 1) {
+                        j++;
+                    } else if (compare_players_by_Score(player_arr1_byScore[i], player_arr2_byScore[j]) == 1) {
                         finalarray_byScore[i + j] = player_arr1_byScore[i];
                         i++;
                     }
@@ -460,15 +480,36 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
             }
 
             if (!new_team->create_tree_from_array_by_Id(finalarray_byId, (n1->getData()->getPlayerCount() +
-                                                                          n2->getData()->getPlayerCount())))
+                                                                          n2->getData()->getPlayerCount()))) {
+                delete[] player_arr1_byId;
+                delete[] player_arr1_byScore;
+                delete[] player_arr2_byId;
+                delete[] player_arr2_byScore;
+                delete[] finalarray_byScore;
+                delete[] finalarray_byId;
                 return StatusType::FAILURE;
+            }
             if (!new_team->create_tree_from_array_by_Score(finalarray_byScore, n1->getData()->getPlayerCount() +
-                                                                               n2->getData()->getPlayerCount()))
+                                                                               n2->getData()->getPlayerCount())) {
+                delete[] player_arr1_byId;
+                delete[] player_arr1_byScore;
+                delete[] player_arr2_byId;
+                delete[] player_arr2_byScore;
+                delete[] finalarray_byScore;
+                delete[] finalarray_byId;
                 return StatusType::FAILURE;
+            }
 
             if (n1->getData()->getPlayerCount() > 10 && n1->getData()->getGoalkeeperCount() > 0) {
-               if(current_active_teams.remove(n1->getData(), &compare_teams_by_id)==false)
-                   return StatusType::FAILURE;
+                if (current_active_teams.remove(n1->getData(), &compare_teams_by_id) == false) {
+                    delete[] player_arr1_byId;
+                    delete[] player_arr1_byScore;
+                    delete[] player_arr2_byId;
+                    delete[] player_arr2_byScore;
+                    delete[] finalarray_byScore;
+                    delete[] finalarray_byId;
+                    return StatusType::FAILURE;
+                }
                 if (n1->getData()->getglobal_right_closest_team().lock() != nullptr)
                     n1->getData()->getglobal_right_closest_team().lock()->setglobal_left_closest_team(
                             n1->getData()->getglobal_left_closest_team());
@@ -478,8 +519,15 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
             }
 
             if (n2->getData()->getPlayerCount() > 10 && n2->getData()->getGoalkeeperCount() > 0) {
-                if(current_active_teams.remove(n2->getData(), &compare_teams_by_id)==false)
+                if (current_active_teams.remove(n2->getData(), &compare_teams_by_id) == false) {
+                    delete[] player_arr1_byId;
+                    delete[] player_arr1_byScore;
+                    delete[] player_arr2_byId;
+                    delete[] player_arr2_byScore;
+                    delete[] finalarray_byScore;
+                    delete[] finalarray_byId;
                     return StatusType::FAILURE;
+                }
                 if (n2->getData()->getglobal_right_closest_team().lock() != nullptr)
                     n2->getData()->getglobal_right_closest_team().lock()->setglobal_left_closest_team(
                             n2->getData()->getglobal_left_closest_team());
@@ -487,34 +535,46 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
                     n2->getData()->getglobal_left_closest_team().lock()->setglobal_right_closest_team(
                             n2->getData()->getglobal_right_closest_team());
             }
-                if (new_team->getPlayerCount() > 10 && new_team->getGoalkeeperCount() > 0) {
-                    shared_ptr<Team> left(new Team(0, 0));
-                    shared_ptr<Team> right(new Team(0, 0));
-                    if(current_active_teams.add(new_team, &compare_teams_by_id, left, right)==false)
-                        return StatusType::FAILURE;
-                    if (left->getteamID() != new_team->getteamID()) {
-                        new_team->setglobal_left_closest_team(left);
-                    }
-                    if (right->getteamID() != new_team->getteamID()) {
-                        new_team->setglobal_right_closest_team(right);
-                    }
-                    if (new_team->getglobal_right_closest_team().lock() != nullptr)
-                        new_team->getglobal_right_closest_team().lock()->setglobal_left_closest_team(new_team);
-                    if (new_team->getglobal_left_closest_team().lock() != nullptr)
-                        new_team->getglobal_left_closest_team().lock()->setglobal_right_closest_team(new_team);
+            if (new_team->getPlayerCount() > 10 && new_team->getGoalkeeperCount() > 0) {
+                shared_ptr<Team> left(new Team(0, 0));
+                shared_ptr<Team> right(new Team(0, 0));
+                if (current_active_teams.add(new_team, &compare_teams_by_id, left, right) == false) {
+                    delete[] player_arr1_byId;
+                    delete[] player_arr1_byScore;
+                    delete[] player_arr2_byId;
+                    delete[] player_arr2_byScore;
+                    delete[] finalarray_byScore;
+                    delete[] finalarray_byId;
+                    return StatusType::FAILURE;
                 }
-
+                if (left->getteamID() != new_team->getteamID()) {
+                    new_team->setglobal_left_closest_team(left);
+                }
+                if (right->getteamID() != new_team->getteamID()) {
+                    new_team->setglobal_right_closest_team(right);
+                }
+                if (new_team->getglobal_right_closest_team().lock() != nullptr)
+                    new_team->getglobal_right_closest_team().lock()->setglobal_left_closest_team(new_team);
+                if (new_team->getglobal_left_closest_team().lock() != nullptr)
+                    new_team->getglobal_left_closest_team().lock()->setglobal_right_closest_team(new_team);
+            }
 
 
             n1->getData()->setPlayerCount(0);
             n2->getData()->setPlayerCount(0);
             teams_tree.remove(n1->getData(), &compare_teams_by_id);
             teams_tree.remove(n2->getData(), &compare_teams_by_id);
-            if(newTeamId==teamId1||newTeamId==teamId2)
+            if (newTeamId == teamId1 || newTeamId == teamId2)
                 teams_tree.add(new_team, &compare_teams_by_id);
-
+            delete[] player_arr1_byId;
+            delete[] player_arr1_byScore;
+            delete[] player_arr2_byId;
+            delete[] player_arr2_byScore;
+            delete[] finalarray_byScore;
+            delete[] finalarray_byId;
         }
     }
+
     catch (std::bad_alloc) {
         return StatusType::ALLOCATION_ERROR;
     }
@@ -580,6 +640,8 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
             for (int i = 0; i < n1->getData()->getPlayerCount(); i++) {
                 output[i] = player_arr[i]->get_player_ID();
             }
+            delete[] player_arr;
+
         }
         if(teamId<0)
         {
@@ -590,6 +652,7 @@ StatusType world_cup_t::get_all_players(int teamId, int *const output)
             for(int i=0; i<total_players_counter;i++) {
                 output[i] = player_arr[i]->get_player_ID();
             }
+            delete[] player_arr;
         }
 
 
