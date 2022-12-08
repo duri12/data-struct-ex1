@@ -437,7 +437,7 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
             n1->getData()->setAdditionalGamesPlayed(0);
             for (int i = 0; i < n2->getData()->getPlayerCount(); i++) {
                 player_arr2_byId[i]->set_games_played(
-                        player_arr2_byId[i]->get_games_played() + n1->getData()->getAdditionalGamesPlayed());
+                        player_arr2_byId[i]->get_games_played() + n2->getData()->getAdditionalGamesPlayed());
                 player_arr2_byId[i]->set_team_pointer(new_team);
 
             }
