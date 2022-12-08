@@ -163,6 +163,11 @@ StatusType world_cup_t::remove_player(int playerId)
             return StatusType::FAILURE;
         if (!n1->getData()->get_team_pointer().lock()->remove_player_from_team_by_Score(n1->getData()))
             return StatusType::FAILURE;
+        if(n1->getData()->get_global_left_closest().lock()!=nullptr)
+           n1->getData()->get_global_left_closest().lock()->set_global_right_closest(n1->getData()->get_global_right_closest());
+        if(n1->getData()->get_global_right_closest().lock()!=nullptr)
+            n1->getData()->get_global_right_closest().lock()->set_global_left_closest(n1->getData()->get_global_left_closest());
+
         if (!players_tree_by_score.remove(n1->getData(), &compare_players_by_Score))
             return StatusType::FAILURE;
       //check if top scorer for team or all players
