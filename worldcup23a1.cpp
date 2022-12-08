@@ -220,9 +220,9 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
 
 
         if(n1->getData()->get_global_left_closest().lock()!=nullptr)
-             n1->getData()->get_global_left_closest().lock()->set_global_right_closest(n1->getData()->get_global_right_closest());
+             n1->getData()->get_global_left_closest().lock()->set_global_right_closest(n1->getData()->get_global_right_closest().lock());
         if(n1->getData()->get_global_right_closest().lock()!=nullptr)
-            n1->getData()->get_global_right_closest().lock()->set_global_left_closest(n1->getData()->get_global_left_closest());
+            n1->getData()->get_global_right_closest().lock()->set_global_left_closest(n1->getData()->get_global_left_closest().lock());
 
 
         if (!n1->getData()->get_team_pointer().lock()->remove_player_from_team_by_Score(n1->getData()))
@@ -242,13 +242,19 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
         if(left->get_player_ID() != n1->getData()->get_player_ID()) {
             n1->getData()->set_global_left_closest(left);
         }
+        else{
+            n1->getData()->set_global_left_closest(shared_ptr<Player>(nullptr));
+        }
         if(right->get_player_ID() !=n1->getData()->get_player_ID()){
             n1->getData()->set_global_right_closest(right);
         }
+        else{
+            n1->getData()->set_global_right_closest(shared_ptr<Player>(nullptr));
+        }
         if(n1->getData()->get_global_left_closest().lock()!=nullptr)
-        n1->getData()->get_global_left_closest().lock()->set_global_right_closest(n1->getData());
+            n1->getData()->get_global_left_closest().lock()->set_global_right_closest(n1->getData());
         if(n1->getData()->get_global_right_closest().lock()!=nullptr)
-        n1->getData()->get_global_right_closest().lock()->set_global_left_closest(n1->getData());
+            n1->getData()->get_global_right_closest().lock()->set_global_left_closest(n1->getData());
         if (!n1->getData()->get_team_pointer().lock()->add_player_to_team_by_score(n1->getData()))
             return StatusType::FAILURE;
         if(compare_players_by_Score(n1->getData()->get_team_pointer().lock()->getTeamTopScorer(),n1->getData())==1){
