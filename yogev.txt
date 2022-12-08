@@ -30,7 +30,7 @@ add_player 9 5 10039 5673 11446 false
 add_player 10 12 4767 11384 4637 true
 add_player 11 4 3487 7346 3612 true
 add_player 12 18 4673 7284 8106 true
-add_player 13 10 9064 5796 4571 true
+ 10 9064 5796 4571 true
 add_player 14 10 2007 9705 10470 true
 add_player 15 6 6564 2492 4097 true
 add_player 16 15 11711 3523 6477 true
