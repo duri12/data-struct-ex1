@@ -219,8 +219,10 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
             return StatusType::FAILURE;
 
 
-        n1->getData()->set_global_left_closest(n1->getData()->get_global_right_closest());
-        n1->getData()->set_global_right_closest(n1->getData()->get_global_left_closest());
+        if(n1->getData()->get_global_left_closest().lock()!=nullptr)
+             n1->getData()->get_global_left_closest().lock()->set_global_right_closest(n1->getData()->get_global_right_closest());
+        if(n1->getData()->get_global_right_closest().lock()!=nullptr)
+            n1->getData()->get_global_right_closest().lock()->set_global_left_closest(n1->getData()->get_global_left_closest());
 
 
         if (!n1->getData()->get_team_pointer().lock()->remove_player_from_team_by_Score(n1->getData()))
