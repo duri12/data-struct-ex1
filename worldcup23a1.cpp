@@ -167,7 +167,6 @@ StatusType world_cup_t::remove_player(int playerId)
            n1->getData()->get_global_left_closest().lock()->set_global_right_closest(n1->getData()->get_global_right_closest());
         if(n1->getData()->get_global_right_closest().lock()!=nullptr)
             n1->getData()->get_global_right_closest().lock()->set_global_left_closest(n1->getData()->get_global_left_closest());
-
         if (!players_tree_by_score.remove(n1->getData(), &compare_players_by_Score))
             return StatusType::FAILURE;
       //check if top scorer for team or all players
