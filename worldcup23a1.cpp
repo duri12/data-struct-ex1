@@ -589,6 +589,7 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
             n1->getData()->setPlayerCount(0);
             n2->getData()->setPlayerCount(0);
             teams_tree.remove(n1->getData(), &compare_teams_by_id);
+           if(n1->getData()!=n2->getData());
             teams_tree.remove(n2->getData(), &compare_teams_by_id);
             if (newTeamId == teamId1 || newTeamId == teamId2)
                 teams_tree.add(new_team, &compare_teams_by_id);
