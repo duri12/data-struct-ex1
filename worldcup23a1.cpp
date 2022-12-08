@@ -38,13 +38,7 @@ StatusType world_cup_t::remove_team(int teamId)
             return StatusType::FAILURE;
         if(!teams_tree.remove(t1,&compare_teams_by_id))
             return StatusType::FAILURE;
-
-
-
         return StatusType::SUCCESS;
-
-
-
     }
     catch (std::bad_alloc&){
         return StatusType::ALLOCATION_ERROR;
