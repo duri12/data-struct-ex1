@@ -118,8 +118,15 @@ StatusType world_cup_t::add_player(int playerId, int teamId, int gamesPlayed,
                 if(left1->getteamID() != player1->get_team_pointer().lock()->getteamID()) {
                     player1->get_team_pointer().lock()->setglobal_left_closest_team(left1);
                 }
+                else{
+                    player1->get_team_pointer().lock()->setglobal_left_closest_team(shared_ptr<Team>(nullptr));
+
+                }
                 if(right1->getteamID() !=player1->get_team_pointer().lock()->getteamID()){
                     player1->get_team_pointer().lock()->setglobal_right_closest_team(right1);
+                }
+                else{
+                    player1->get_team_pointer().lock()->setglobal_right_closest_team(shared_ptr<Team>(nullptr));
                 }
                 if(player1->get_team_pointer().lock()->getglobal_left_closest_team().lock()!=nullptr)
                     player1->get_team_pointer().lock()->getglobal_left_closest_team().lock()->setglobal_right_closest_team(player1->get_team_pointer().lock());
@@ -242,13 +249,19 @@ StatusType world_cup_t::update_player_stats(int playerId, int gamesPlayed,
         if(left->get_player_ID() != n1->getData()->get_player_ID()) {
             n1->getData()->set_global_left_closest(left);
         }
+        else{
+            n1->getData()->set_global_left_closest(shared_ptr<Player>(nullptr));
+        }
         if(right->get_player_ID() !=n1->getData()->get_player_ID()){
             n1->getData()->set_global_right_closest(right);
         }
+        else{
+            n1->getData()->set_global_right_closest(shared_ptr<Player>(nullptr));
+        }
         if(n1->getData()->get_global_left_closest().lock()!=nullptr)
-        n1->getData()->get_global_left_closest().lock()->set_global_right_closest(n1->getData());
+            n1->getData()->get_global_left_closest().lock()->set_global_right_closest(n1->getData());
         if(n1->getData()->get_global_right_closest().lock()!=nullptr)
-        n1->getData()->get_global_right_closest().lock()->set_global_left_closest(n1->getData());
+            n1->getData()->get_global_right_closest().lock()->set_global_left_closest(n1->getData());
         if (!n1->getData()->get_team_pointer().lock()->add_player_to_team_by_score(n1->getData()))
             return StatusType::FAILURE;
         if(compare_players_by_Score(n1->getData()->get_team_pointer().lock()->getTeamTopScorer(),n1->getData())==1){
@@ -557,8 +570,14 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
                 if (left->getteamID() != new_team->getteamID()) {
                     new_team->setglobal_left_closest_team(left);
                 }
+                else{
+                    new_team->setglobal_left_closest_team(shared_ptr<Team>(nullptr));
+                }
                 if (right->getteamID() != new_team->getteamID()) {
                     new_team->setglobal_right_closest_team(right);
+                }
+                else{
+                    new_team->setglobal_right_closest_team(shared_ptr<Team>(nullptr));
                 }
                 if (new_team->getglobal_right_closest_team().lock() != nullptr)
                     new_team->getglobal_right_closest_team().lock()->setglobal_left_closest_team(new_team);
