@@ -540,6 +540,7 @@ Node<T>* AvlTree<T>::createTreeFromSortedArray(T *array, int start, int end) {
         root = new Node<T>(array[mid]);
         root->setLeft(createTreeFromSortedArray(array, start,mid - 1));
         root->setRight(createTreeFromSortedArray(array, mid + 1, end));
+        update(root);
     }
     catch (const std::bad_alloc&) {
         throw std::bad_alloc();
