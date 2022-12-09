@@ -588,12 +588,15 @@ StatusType world_cup_t::unite_teams(int teamId1, int teamId2, int newTeamId)
 
             n1->getData()->setPlayerCount(0);
             n2->getData()->setPlayerCount(0);
-            if(n1->getData()!=nullptr);
-            teams_tree.remove(n1->getData(), &compare_teams_by_id);
-            if(n2->getData()!=nullptr)
-                teams_tree.remove(n2->getData(), &compare_teams_by_id);
-            if (newTeamId == teamId1 || newTeamId == teamId2)
-                teams_tree.add(new_team, &compare_teams_by_id);
+            teams_tree.remove(team1, &compare_teams_by_id);
+                teams_tree.remove(team2, &compare_teams_by_id);
+
+            if (newTeamId == teamId1 || newTeamId == teamId2) {
+               if(!teams_tree.add(new_team, &compare_teams_by_id))
+                   return StatusType::FAILURE;
+
+
+            }
             delete[] player_arr1_byId;
             delete[] player_arr1_byScore;
             delete[] player_arr2_byId;
