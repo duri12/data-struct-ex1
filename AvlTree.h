@@ -577,7 +577,7 @@ T* AvlTree<T>::findMaxLowerThanX(Node<T>* node,const T&  max, int (*compare)(T, 
 
 template<typename T>
 T* AvlTree<T>::findMinBiggerThanX(Node<T> *node, const T &max, int (*compare)(T, T)) {
-    if (compare == nullptr || node == nullptr){
+    if (compare == nullptr || node == nullptr||node->getData() == nullptr){
         return nullptr;
     }
     if(compare(node->getData() ,max) == 0){
@@ -631,7 +631,8 @@ Node<T>::~Node() {
     if(this->_left != nullptr){
         delete this->_left;
     }
-    delete this->_data;
+    if(this->_data != nullptr)
+        delete this->_data;
 }
 
 template<typename T>
